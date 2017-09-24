@@ -1,11 +1,10 @@
-FROM jitesoft/node-base:8
+FROM jitesoft/node-base:8-slim
 LABEL maintainer="Johannes Tegnér <johannes@jitesoft.com>"
 
 ENV YARN_VERSION="1.0.2" \
     PATH="$PATH:/yarn/bin"
 
-RUN apk add --no-cache git \ 
-    && apk add --no-cache --virtual trash gnupg \
+RUN apk add --no-cache --virtual trash gnupg git \
     && wget -qO- https://dl.yarnpkg.com/debian/pubkey.gpg | gpg --import \
     && wget https://github.com/yarnpkg/yarn/releases/download/v${YARN_VERSION}/yarn-v${YARN_VERSION}.tar.gz \
     && wget -O keys.asc https://github.com/yarnpkg/yarn/releases/download/v${YARN_VERSION}/yarn-v${YARN_VERSION}.tar.gz.asc \
