@@ -1,19 +1,18 @@
-FROM jitesoft/node-base:latest
+FROM jitesoft/node-base:6
 LABEL maintainer="Johannes Tegnér <johannes@jitesoft.com>"
 
-ENV YARN_VERSION="0.27.5" \
-    YARN_GNUPG_KEY="6A010C5166006599AA17F08146C2130DFD2497F5"
+ENV YARN_VERSION="1.0.2" \
+    PATH="$PATH:/yarn/bin"
 
 RUN apk add --no-cache git \ 
-    && apk add --no-cache --virtual trash wget gnupg tar \
+    && apk add --no-cache --virtual trash gnupg \
+    && wget -qO- https://dl.yarnpkg.com/debian/pubkey.gpg | gpg --import \
     && wget https://github.com/yarnpkg/yarn/releases/download/v${YARN_VERSION}/yarn-v${YARN_VERSION}.tar.gz \
     && wget -O keys.asc https://github.com/yarnpkg/yarn/releases/download/v${YARN_VERSION}/yarn-v${YARN_VERSION}.tar.gz.asc \
-    && gpg --keyserver pgp.mit.edu --recv-keys "${YARN_GNUPG_KEY}" || gpg --keyserver keyserver.pgp.com --recv-keys "${YARN_GNUPG_KEY}" || gpg --keyserver ha.pool.sks-keyservers.net --recv-keys "${YARN_GNUPG_KEY}"; \
-    gpg --batch --verify keys.asc yarn-v${YARN_VERSION}.tar.gz \
-    && mkdir /yarn && tar -xzvf yarn-v${YARN_VERSION}.tar.gz -C /yarn \
-    && ln -s /yarn/dist/bin/yarn /usr/local/bin/yarn \
-    && ln -s /yarn/dist/bin/yarn /usr/local/bin/yarnpkg \
+    && gpg --verify keys.asc yarn-v${YARN_VERSION}.tar.gz \
+    && mkdir /yarn \
+    && tar -xzvf yarn-v${YARN_VERSION}.tar.gz -C /yarn --strip-components=1 \
     && rm -r yarn-v${YARN_VERSION}.tar.gz keys.asc \
     && apk del trash
 
-CMD [ "yarn" ]
+ENTRYPOINT [ "yarn" ]
