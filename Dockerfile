@@ -1,7 +1,7 @@
-FROM jitesoft/node-base:8
+FROM jitesoft/node-base:9
 LABEL maintainer="Johannes Tegnér <johannes@jitesoft.com>"
 
-ENV YARN_VERSION="1.0.2" \
+ENV YARN_VERSION="1.3.2" \
     PATH="$PATH:/yarn/bin"
 
 RUN apk add --no-cache git \ 
