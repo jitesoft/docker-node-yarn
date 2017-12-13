@@ -4,7 +4,7 @@ variables:
   IMG_NAME: "jitesoft/node-yarn"
   DOCKER_FILE: "/full/latest/Dockerfile"
 
-deploy_latest:  
+deploy_latest:
   variables:
     DOCKER_FILE: "/full/latest/Dockerfile"
   script:
@@ -21,7 +21,7 @@ deploy_latest:
   only:
     - master
 
-deploy_stable:  
+deploy_stable:
   variables:
     DOCKER_FILE: "/full/stable/Dockerfile"
   script:
@@ -55,7 +55,7 @@ deploy_latest_slim:
   only:
     - master
 
-deploy_stable_slim:  
+deploy_stable_slim:
   variables:
     DOCKER_FILE: "/slim/stable/Dockerfile"
   script:
