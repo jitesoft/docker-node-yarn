@@ -14,6 +14,7 @@ deploy_latest:
     - BUILD=$(docker build -q -f ${DOCKER_FILE} .)
     - YARN=$(./getenv.sh YARN_VERSION ${BUILD})
     - NODE=$(./getenv.sh NODE_VERSION ${BUILD})
+    - echo "Building for node v ${NODE} and Yarn v ${YARN} The image build hash is ${BUILD}"
     - NODE_SHORT="${NODE:0:1}"
     - docker login -u $HUB_USER -p $HUB_PW
     - TAGS="${NODE} ${NODE}-${YARN} ${NODE_SHORT} ${NODE_SHORT}-${YARN} latest"
