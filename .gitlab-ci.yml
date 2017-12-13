@@ -5,7 +5,7 @@ variables:
   DOCKER_FILE: "/full/latest/Dockerfile"
 
 deploy_latest:  
-variables:
+  variables:
     DOCKER_FILE: "/full/latest/Dockerfile"
   script:
     - BUILD=$(docker build -q -f ${DOCKER_FILE} .) # Build the image and store the hash in the BUILD var.
@@ -22,7 +22,7 @@ variables:
     - master
 
 deploy_stable:  
-variables:
+  variables:
     DOCKER_FILE: "/full/stable/Dockerfile"
   script:
     - BUILD=$(docker build -q -f ${DOCKER_FILE} .)
@@ -56,7 +56,7 @@ variables:
     - master
 
 deploy_stable_slim:  
-variables:
+  variables:
     DOCKER_FILE: "/slim/stable/Dockerfile"
   script:
     - BUILD=$(docker build -q -f ${DOCKER_FILE} .)
