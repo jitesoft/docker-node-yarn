@@ -8,10 +8,12 @@ deploy_latest:
   stage: deploy
   variables:
     DOCKER_FILE: "full/latest/Dockerfile"
+  before_script:
+    - chmod +x getenv.sh
   script:
     - BUILD=$(docker build -q -f ${DOCKER_FILE} .)
-    - YARN=$(getenv.sh YARN_VERSION ${BUILD})
-    - NODE=$(getenv.sh NODE_VERSION ${BUILD})
+    - YARN=$(./getenv.sh YARN_VERSION ${BUILD})
+    - NODE=$(./getenv.sh NODE_VERSION ${BUILD})
     - NODE_SHORT="${NODE:0:1}"
     - TAGS=( "${NODE}" "${NODE}-${YARN}" "${NODE_SHORT}" "${NODE_SHORT}-${YARN}" "latest" )
     - docker login -u $HUB_USER -p $HUB_PW
@@ -26,10 +28,12 @@ deploy_stable:
   stage: deploy
   variables:
     DOCKER_FILE: "full/stable/Dockerfile"
+  before_script:
+    - chmod +x getenv.sh
   script:
     - BUILD=$(docker build -q -f ${DOCKER_FILE} .)
-    - YARN=$(getenv.sh YARN_VERSION ${BUILD})
-    - NODE=$(getenv.sh NODE_VERSION ${BUILD})
+    - YARN=$(./getenv.sh YARN_VERSION ${BUILD})
+    - NODE=$(./getenv.sh NODE_VERSION ${BUILD})
     - NODE_SHORT="${NODE:0:1}"
     - TAGS=( "${NODE}" "${NODE}-${YARN}" "${NODE_SHORT}" "${NODE_SHORT}-${YARN}" "stable" )
     - docker login -u $HUB_USER -p $HUB_PW
@@ -44,10 +48,12 @@ deploy_latest_slim:
   stage: deploy
   variables:
     DOCKER_FILE: "slim/latest/Dockerfile"
+  before_script:
+    - chmod +x getenv.sh
   script:
     - BUILD=$(docker build -q -f ${DOCKER_FILE} .)
-    - YARN=$(getenv.sh YARN_VERSION ${BUILD})
-    - NODE=$(getenv.sh NODE_VERSION ${BUILD})
+    - YARN=$(./getenv.sh YARN_VERSION ${BUILD})
+    - NODE=$(./getenv.sh NODE_VERSION ${BUILD})
     - NODE_SHORT="${NODE:0:1}"
     - TAGS=( "${NODE}-slim" "${NODE}-${YARN}-slim" "${NODE_SHORT}-slim" "${NODE_SHORT}-${YARN}-slim" "latest-slim" )
     - docker login -u $HUB_USER -p $HUB_PW
@@ -62,10 +68,12 @@ deploy_stable_slim:
   stage: deploy
   variables:
     DOCKER_FILE: "slim/stable/Dockerfile"
+  before_script:
+    - chmod +x getenv.sh
   script:
     - BUILD=$(docker build -q -f ${DOCKER_FILE} .)
-    - YARN=$(getenv.sh YARN_VERSION ${BUILD})
-    - NODE=$(getenv.sh NODE_VERSION ${BUILD})
+    - YARN=$(./getenv.sh YARN_VERSION ${BUILD})
+    - NODE=$(./getenv.sh NODE_VERSION ${BUILD})
     - NODE_SHORT="${NODE:0:1}"
     - TAGS=( "${NODE}-slim" "${NODE}-${YARN}-slim" "${NODE_SHORT}-slim" "${NODE_SHORT}-${YARN}-slim" "stable-slim" )
     - docker login -u $HUB_USER -p $HUB_PW
