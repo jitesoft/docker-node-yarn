@@ -8,15 +8,15 @@ deploy_latest:
   variables:
     DOCKER_FILE: "/full/latest/Dockerfile"
   script:
-    - BUILD=$(docker build -q -f ${DOCKER_FILE} .) # Build the image and store the hash in the BUILD var.
-    - YARN=$(getenv.sh YARN_VERSION ${BUILD})      # Fetch the yarn version.
-    - NODE=$(getenv.sh NODE_VERSION ${BUILD})      # Fetch the node version.
-    - NODE_SHORT="${NODE:0:1}"                     # Get the short-node version (major version).
+    - BUILD=$(docker build -q -f ${DOCKER_FILE} .)
+    - YARN=$(getenv.sh YARN_VERSION ${BUILD})
+    - NODE=$(getenv.sh NODE_VERSION ${BUILD})
+    - NODE_SHORT="${NODE:0:1}"
     - TAGS=( "${NODE}" "${NODE}-${YARN}" "${NODE_SHORT}" "${NODE_SHORT}-${YARN}" "latest" )
-    - docker login -u $HUB_USER -p $HUB_PW         # Login to hub!
-    - for tag in "${TAGS[@]}" do \                 # Iterate all tag names and push to docker hub.
-        docker tag $BUILD ${IMG_NAME}:${tag} \
-        docker push ${IMG_NAME}:${TAG} \
+    - docker login -u $HUB_USER -p $HUB_PW
+    - for tag in "${TAGS[@]}" do
+        docker tag $BUILD ${IMG_NAME}:${tag}
+        docker push ${IMG_NAME}:${TAG}
       done
   only:
     - master
@@ -31,9 +31,9 @@ deploy_stable:
     - NODE_SHORT="${NODE:0:1}"
     - TAGS=( "${NODE}" "${NODE}-${YARN}" "${NODE_SHORT}" "${NODE_SHORT}-${YARN}" "stable" )
     - docker login -u $HUB_USER -p $HUB_PW
-    - for tag in "${TAGS[@]}" do \
-        docker tag $BUILD ${IMG_NAME}:${tag} \
-        docker push ${IMG_NAME}:${TAG} \
+    - for tag in "${TAGS[@]}" do
+        docker tag $BUILD ${IMG_NAME}:${tag}
+        docker push ${IMG_NAME}:${TAG}
       done
   only:
     - master
@@ -48,9 +48,9 @@ deploy_latest_slim:
     - NODE_SHORT="${NODE:0:1}"
     - TAGS=( "${NODE}-slim" "${NODE}-${YARN}-slim" "${NODE_SHORT}-slim" "${NODE_SHORT}-${YARN}-slim" "latest-slim" )
     - docker login -u $HUB_USER -p $HUB_PW
-    - for tag in "${TAGS[@]}" do \
-        docker tag $BUILD ${IMG_NAME}:${tag} \
-        docker push ${IMG_NAME}:${TAG} \
+    - for tag in "${TAGS[@]}" do
+        docker tag $BUILD ${IMG_NAME}:${tag}
+        docker push ${IMG_NAME}:${TAG}
       done
   only:
     - master
@@ -65,9 +65,9 @@ deploy_stable_slim:
     - NODE_SHORT="${NODE:0:1}"
     - TAGS=( "${NODE}-slim" "${NODE}-${YARN}-slim" "${NODE_SHORT}-slim" "${NODE_SHORT}-${YARN}-slim" "stable-slim" )
     - docker login -u $HUB_USER -p $HUB_PW
-    - for tag in "${TAGS[@]}" do \
-        docker tag $BUILD ${IMG_NAME}:${tag} \
-        docker push ${IMG_NAME}:${TAG} \
+    - for tag in "${TAGS[@]}" do
+        docker tag $BUILD ${IMG_NAME}:${tag}
+        docker push ${IMG_NAME}:${TAG}
       done
   only:
     - master
