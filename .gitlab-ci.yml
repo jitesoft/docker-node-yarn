@@ -8,12 +8,10 @@ deploy_latest:
   stage: deploy
   variables:
     DOCKER_FILE: "full/latest/Dockerfile"
-  before_script:
-    - chmod +x getenv.sh
   script:
     - BUILD=$(docker build -q -f ${DOCKER_FILE} .)
-    - YARN=$(./getenv.sh YARN_VERSION ${BUILD})
-    - NODE=$(./getenv.sh NODE_VERSION ${BUILD})
+    - YARN=$(docker inspect -f '{{range $index, $value := .Config.Env}}{{if eq (index (split $value "=") 0) "YARN_VERSION" }}{{range $i, $part := (split $value "=")}}{{if gt $i 1}}{{print "="}}{{end}}{{if gt $i 0}}{{print $part}}{{end}}{{end}}{{end}}{{end}}' ${BUILD})
+    - NODE=$(docker inspect -f '{{range $index, $value := .Config.Env}}{{if eq (index (split $value "=") 0) "NODE_VERSION" }}{{range $i, $part := (split $value "=")}}{{if gt $i 1}}{{print "="}}{{end}}{{if gt $i 0}}{{print $part}}{{end}}{{end}}{{end}}{{end}}' ${BUILD})
     - echo "Building for node v ${NODE} and Yarn v ${YARN} The image build hash is ${BUILD}"
     - NODE_SHORT="${NODE:0:1}"
     - docker login -u $HUB_USER -p $HUB_PW
@@ -27,12 +25,11 @@ deploy_stable:
   stage: deploy
   variables:
     DOCKER_FILE: "full/stable/Dockerfile"
-  before_script:
-    - chmod +x getenv.sh
   script:
     - BUILD=$(docker build -q -f ${DOCKER_FILE} .)
-    - YARN=$(./getenv.sh YARN_VERSION ${BUILD})
-    - NODE=$(./getenv.sh NODE_VERSION ${BUILD})
+    - YARN=$(docker inspect -f '{{range $index, $value := .Config.Env}}{{if eq (index (split $value "=") 0) "YARN_VERSION" }}{{range $i, $part := (split $value "=")}}{{if gt $i 1}}{{print "="}}{{end}}{{if gt $i 0}}{{print $part}}{{end}}{{end}}{{end}}{{end}}' ${BUILD})
+    - NODE=$(docker inspect -f '{{range $index, $value := .Config.Env}}{{if eq (index (split $value "=") 0) "NODE_VERSION" }}{{range $i, $part := (split $value "=")}}{{if gt $i 1}}{{print "="}}{{end}}{{if gt $i 0}}{{print $part}}{{end}}{{end}}{{end}}{{end}}' ${BUILD})
+    - echo "Building for node v ${NODE} and Yarn v ${YARN} The image build hash is ${BUILD}"
     - NODE_SHORT="${NODE:0:1}"
     - docker login -u $HUB_USER -p $HUB_PW
     - TAGS="${NODE} ${NODE}-${YARN} ${NODE_SHORT} ${NODE_SHORT}-${YARN} stable"
@@ -45,12 +42,11 @@ deploy_latest_slim:
   stage: deploy
   variables:
     DOCKER_FILE: "slim/latest/Dockerfile"
-  before_script:
-    - chmod +x getenv.sh
   script:
     - BUILD=$(docker build -q -f ${DOCKER_FILE} .)
-    - YARN=$(./getenv.sh YARN_VERSION ${BUILD})
-    - NODE=$(./getenv.sh NODE_VERSION ${BUILD})
+    - YARN=$(docker inspect -f '{{range $index, $value := .Config.Env}}{{if eq (index (split $value "=") 0) "YARN_VERSION" }}{{range $i, $part := (split $value "=")}}{{if gt $i 1}}{{print "="}}{{end}}{{if gt $i 0}}{{print $part}}{{end}}{{end}}{{end}}{{end}}' ${BUILD})
+    - NODE=$(docker inspect -f '{{range $index, $value := .Config.Env}}{{if eq (index (split $value "=") 0) "NODE_VERSION" }}{{range $i, $part := (split $value "=")}}{{if gt $i 1}}{{print "="}}{{end}}{{if gt $i 0}}{{print $part}}{{end}}{{end}}{{end}}{{end}}' ${BUILD})
+    - echo "Building for node v ${NODE} and Yarn v ${YARN} The image build hash is ${BUILD}"
     - NODE_SHORT="${NODE:0:1}"
     - docker login -u $HUB_USER -p $HUB_PW
     - TAGS="${NODE}-slim ${NODE}-${YARN}-slim ${NODE_SHORT}-slim ${NODE_SHORT}-${YARN}-slim latest-slim"
@@ -63,12 +59,11 @@ deploy_stable_slim:
   stage: deploy
   variables:
     DOCKER_FILE: "slim/stable/Dockerfile"
-  before_script:
-    - chmod +x getenv.sh
   script:
     - BUILD=$(docker build -q -f ${DOCKER_FILE} .)
-    - YARN=$(./getenv.sh YARN_VERSION ${BUILD})
-    - NODE=$(./getenv.sh NODE_VERSION ${BUILD})
+    - YARN=$(docker inspect -f '{{range $index, $value := .Config.Env}}{{if eq (index (split $value "=") 0) "YARN_VERSION" }}{{range $i, $part := (split $value "=")}}{{if gt $i 1}}{{print "="}}{{end}}{{if gt $i 0}}{{print $part}}{{end}}{{end}}{{end}}{{end}}' ${BUILD})
+    - NODE=$(docker inspect -f '{{range $index, $value := .Config.Env}}{{if eq (index (split $value "=") 0) "NODE_VERSION" }}{{range $i, $part := (split $value "=")}}{{if gt $i 1}}{{print "="}}{{end}}{{if gt $i 0}}{{print $part}}{{end}}{{end}}{{end}}{{end}}' ${BUILD})
+    - echo "Building for node v ${NODE} and Yarn v ${YARN} The image build hash is ${BUILD}"
     - NODE_SHORT="${NODE:0:1}"
     - docker login -u $HUB_USER -p $HUB_PW
     - TAGS="${NODE}-slim ${NODE}-${YARN}-slim ${NODE_SHORT}-slim ${NODE_SHORT}-${YARN}-slim stable-slim"
