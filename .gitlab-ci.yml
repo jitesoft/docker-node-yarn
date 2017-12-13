@@ -2,12 +2,12 @@ image: docker:latest
 
 variables:
   IMG_NAME: "jitesoft/node-yarn"
-  DOCKER_FILE: "/full/latest/Dockerfile"
+  DOCKER_FILE: "full/latest/Dockerfile"
 
 deploy_latest:
   stage: deploy
   variables:
-    DOCKER_FILE: "/full/latest/Dockerfile"
+    DOCKER_FILE: "full/latest/Dockerfile"
   script:
     - BUILD=$(docker build -q -f ${DOCKER_FILE} .)
     - YARN=$(getenv.sh YARN_VERSION ${BUILD})
@@ -25,7 +25,7 @@ deploy_latest:
 deploy_stable:
   stage: deploy
   variables:
-    DOCKER_FILE: "/full/stable/Dockerfile"
+    DOCKER_FILE: "full/stable/Dockerfile"
   script:
     - BUILD=$(docker build -q -f ${DOCKER_FILE} .)
     - YARN=$(getenv.sh YARN_VERSION ${BUILD})
@@ -43,7 +43,7 @@ deploy_stable:
 deploy_latest_slim:
   stage: deploy
   variables:
-    DOCKER_FILE: "/slim/latest/Dockerfile"
+    DOCKER_FILE: "slim/latest/Dockerfile"
   script:
     - BUILD=$(docker build -q -f ${DOCKER_FILE} .)
     - YARN=$(getenv.sh YARN_VERSION ${BUILD})
@@ -61,7 +61,7 @@ deploy_latest_slim:
 deploy_stable_slim:
   stage: deploy
   variables:
-    DOCKER_FILE: "/slim/stable/Dockerfile"
+    DOCKER_FILE: "slim/stable/Dockerfile"
   script:
     - BUILD=$(docker build -q -f ${DOCKER_FILE} .)
     - YARN=$(getenv.sh YARN_VERSION ${BUILD})
