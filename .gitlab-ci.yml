@@ -5,6 +5,7 @@ variables:
   DOCKER_FILE: "/full/latest/Dockerfile"
 
 deploy_latest:
+  stage: deploy
   variables:
     DOCKER_FILE: "/full/latest/Dockerfile"
   script:
@@ -22,6 +23,7 @@ deploy_latest:
     - master
 
 deploy_stable:
+  stage: deploy
   variables:
     DOCKER_FILE: "/full/stable/Dockerfile"
   script:
@@ -39,6 +41,7 @@ deploy_stable:
     - master
 
 deploy_latest_slim:
+  stage: deploy
   variables:
     DOCKER_FILE: "/slim/latest/Dockerfile"
   script:
@@ -56,6 +59,7 @@ deploy_latest_slim:
     - master
 
 deploy_stable_slim:
+  stage: deploy
   variables:
     DOCKER_FILE: "/slim/stable/Dockerfile"
   script:
