@@ -38,8 +38,8 @@ deploy_stable:
   only:
     - master
 
-deploy_latest_slim:  
-variables:
+deploy_latest_slim:
+  variables:
     DOCKER_FILE: "/slim/latest/Dockerfile"
   script:
     - BUILD=$(docker build -q -f ${DOCKER_FILE} .)
