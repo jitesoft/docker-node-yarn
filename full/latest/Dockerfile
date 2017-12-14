@@ -1,4 +1,4 @@
-FROM jitesoft/node-base:9
+FROM jitesoft/node-base:latest-slim
 LABEL maintainer="Johannes Tegnér <johannes@jitesoft.com>"
 
 ENV YARN_VERSION="1.3.2" \
