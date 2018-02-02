@@ -1,7 +1,7 @@
 FROM jitesoft/node-base:stable-slim
 LABEL maintainer="Johannes Tegnér <johannes@jitesoft.com>"
 
-ENV YARN_VERSION="1.3.2" \
+ENV YARN_VERSION="1.4.1" \
     PATH="$PATH:/yarn/bin"
 
 RUN apk add --no-cache --virtual trash gnupg git openssl \
