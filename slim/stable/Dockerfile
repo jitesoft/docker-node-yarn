@@ -1,7 +1,7 @@
 FROM jitesoft/node-base:stable-slim
 LABEL maintainer="Johannes Tegnér <johannes@jitesoft.com>"
 
-ENV YARN_VERSION="1.4.1" \
+ENV YARN_VERSION="1.5.1" \
     PATH="$PATH:/yarn/bin"
 
 RUN apk add --no-cache --virtual trash gnupg git openssl \
@@ -14,4 +14,4 @@ RUN apk add --no-cache --virtual trash gnupg git openssl \
     && rm -r yarn-v${YARN_VERSION}.tar.gz keys.asc \
     && apk del trash
 
-ENTRYPOINT [ "yarn" ]
+CMD [ "yarn" ]
