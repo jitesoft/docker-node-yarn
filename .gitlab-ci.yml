@@ -1,67 +1,58 @@
 image: docker:latest
 
-variables:
-  IMG_NAME: "jitesoft/node-yarn"
+stages:
+  - slim
+  - full
 
-before_script:
-  - docker login -u ${DOCKER_HUB_USER} -p ${DOCKER_HUB_PASSWORD}
 
-deploy_latest:
-  stage: deploy
-  variables:
-    DOCKER_FILE: "full/latest/Dockerfile"
+.build:slim: &slim
+  stage: slim
+  before_script:
+    - docker login -u ${DOCKER_HUB_USER} -p ${DOCKER_HUB_PASSWORD}
+    - docker pull jitesoft/node-base:${BUILD_TYPE}-slim
   script:
-    - BUILD=$(docker build -q -f ${DOCKER_FILE} .)
-    - YARN=$(docker inspect -f '{{range $index, $value := .Config.Env}}{{if eq (index (split $value "=") 0) "YARN_VERSION" }}{{range $i, $part := (split $value "=")}}{{if gt $i 1}}{{print "="}}{{end}}{{if gt $i 0}}{{print $part}}{{end}}{{end}}{{end}}{{end}}' ${BUILD})
+    - BUILD=$(docker build --build-arg BUILD_TYPE=${BUILD_TYPE} -q -f slim/Dockerfile .)
     - NODE=$(docker inspect -f '{{range $index, $value := .Config.Env}}{{if eq (index (split $value "=") 0) "NODE_VERSION" }}{{range $i, $part := (split $value "=")}}{{if gt $i 1}}{{print "="}}{{end}}{{if gt $i 0}}{{print $part}}{{end}}{{end}}{{end}}{{end}}' ${BUILD})
+    - YARN=$(docker run --rm ${BUILD} yarn -v)
     - echo "Building for node v ${NODE} and Yarn v ${YARN} The image build hash is ${BUILD}"
     - NODE_SHORT="${NODE:0:1}"
-    - TAGS="${NODE} ${NODE}-${YARN} ${NODE_SHORT} ${NODE_SHORT}-${YARN} latest"
-    - for tag in $TAGS; do docker tag $BUILD ${IMG_NAME}:${tag}; docker push ${IMG_NAME}:${tag}; done
-  only:
-    - master
+    - TAGS="${NODE}-slim ${NODE_SHORT}-slim ${EXTRA_TAGS}"
+    - for tag in $TAGS; do docker tag $BUILD jitesoft/node-yarn:${tag}; docker push jitesoft/node-yarn:${tag}; done
 
-deploy_stable:
-  stage: deploy
-  variables:
-    DOCKER_FILE: "full/stable/Dockerfile"
+.build:full: &full
+  stage: full
+  before_script:
+    - docker login -u ${DOCKER_HUB_USER} -p ${DOCKER_HUB_PASSWORD}
+    - docker pull jitesoft/node-yarn:${BUILD_TYPE}-slim
   script:
-    - BUILD=$(docker build -q -f ${DOCKER_FILE} .)
-    - YARN=$(docker inspect -f '{{range $index, $value := .Config.Env}}{{if eq (index (split $value "=") 0) "YARN_VERSION" }}{{range $i, $part := (split $value "=")}}{{if gt $i 1}}{{print "="}}{{end}}{{if gt $i 0}}{{print $part}}{{end}}{{end}}{{end}}{{end}}' ${BUILD})
+    - BUILD=$(docker build --build-arg BUILD_TYPE=${BUILD_TYPE} -q -f full/Dockerfile)
     - NODE=$(docker inspect -f '{{range $index, $value := .Config.Env}}{{if eq (index (split $value "=") 0) "NODE_VERSION" }}{{range $i, $part := (split $value "=")}}{{if gt $i 1}}{{print "="}}{{end}}{{if gt $i 0}}{{print $part}}{{end}}{{end}}{{end}}{{end}}' ${BUILD})
-    - echo "Building for node v ${NODE} and Yarn v ${YARN} The image build hash is ${BUILD}"
+    - YARN=$(docker run --rm ${BUILD} yarn -v)
     - NODE_SHORT="${NODE:0:1}"
-    - TAGS="${NODE} ${NODE}-${YARN} ${NODE_SHORT} ${NODE_SHORT}-${YARN} stable"
-    - for tag in $TAGS; do docker tag $BUILD ${IMG_NAME}:${tag}; docker push ${IMG_NAME}:${tag}; done
-  only:
-    - master
+    - TAGS="${NODE} ${NODE_SHORT} ${EXTRA_TAGS}"
+    - for tag in $TAGS; do docker tag $BUILD jitesoft/node-yarn:${tag}; docker push jitesoft/node-yarn:${tag}; done
 
-deploy_latest_slim:
-  stage: deploy
-  variables:
-    DOCKER_FILE: "slim/latest/Dockerfile"
-  script:
-    - BUILD=$(docker build -q -f ${DOCKER_FILE} .)
-    - YARN=$(docker inspect -f '{{range $index, $value := .Config.Env}}{{if eq (index (split $value "=") 0) "YARN_VERSION" }}{{range $i, $part := (split $value "=")}}{{if gt $i 1}}{{print "="}}{{end}}{{if gt $i 0}}{{print $part}}{{end}}{{end}}{{end}}{{end}}' ${BUILD})
-    - NODE=$(docker inspect -f '{{range $index, $value := .Config.Env}}{{if eq (index (split $value "=") 0) "NODE_VERSION" }}{{range $i, $part := (split $value "=")}}{{if gt $i 1}}{{print "="}}{{end}}{{if gt $i 0}}{{print $part}}{{end}}{{end}}{{end}}{{end}}' ${BUILD})
-    - echo "Building for node v ${NODE} and Yarn v ${YARN} The image build hash is ${BUILD}"
-    - NODE_SHORT="${NODE:0:1}"
-    - TAGS="${NODE}-slim ${NODE}-${YARN}-slim ${NODE_SHORT}-slim ${NODE_SHORT}-${YARN}-slim latest-slim"
-    - for tag in $TAGS; do docker tag $BUILD ${IMG_NAME}:${tag}; docker push ${IMG_NAME}:${tag}; done
-  only:
-    - master
 
-deploy_stable_slim:
-  stage: deploy
+build:slim:stable:
+  <<: *slim
   variables:
-    DOCKER_FILE: "slim/stable/Dockerfile"
-  script:
-    - BUILD=$(docker build -q -f ${DOCKER_FILE} .)
-    - YARN=$(docker inspect -f '{{range $index, $value := .Config.Env}}{{if eq (index (split $value "=") 0) "YARN_VERSION" }}{{range $i, $part := (split $value "=")}}{{if gt $i 1}}{{print "="}}{{end}}{{if gt $i 0}}{{print $part}}{{end}}{{end}}{{end}}{{end}}' ${BUILD})
-    - NODE=$(docker inspect -f '{{range $index, $value := .Config.Env}}{{if eq (index (split $value "=") 0) "NODE_VERSION" }}{{range $i, $part := (split $value "=")}}{{if gt $i 1}}{{print "="}}{{end}}{{if gt $i 0}}{{print $part}}{{end}}{{end}}{{end}}{{end}}' ${BUILD})
-    - echo "Building for node v ${NODE} and Yarn v ${YARN} The image build hash is ${BUILD}"
-    - NODE_SHORT="${NODE:0:1}"
-    - TAGS="${NODE}-slim ${NODE}-${YARN}-slim ${NODE_SHORT}-slim ${NODE_SHORT}-${YARN}-slim stable-slim"
-    - for tag in $TAGS; do docker tag $BUILD ${IMG_NAME}:${tag}; docker push ${IMG_NAME}:${tag}; done
-  only:
-    - master
+    BUILD_TYPE: "stable"
+    EXTRA_TAGS: "stable-slim current-slim lts-slim carbon-slim current-slim"
+
+build:slim:latest:
+  <<: *slim
+  variables:
+    BUILD_TYPE: "latest"
+    EXTRA_TAGS: "latest-slim"
+
+build:full:stable:
+  <<: *full
+  variables:
+    BUILD_TYPE: "stable"
+    EXTRA_TAGS: "stable current lts carbon current"
+
+build:full:latest:
+  <<: *full
+  variables:
+    BUILD_TYPE: "latest"
+    EXTRA_TAGS: "latest"
