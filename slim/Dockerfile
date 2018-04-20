@@ -4,9 +4,9 @@ LABEL maintainer="Johannes Tegnér <johannes@jitesoft.com>"
 
 ENV PATH="$PATH:/yarn/bin"
 
-RUN apk add --no-cache --virtual .trash gnupg git openssl \
+RUN apk add --no-cache --virtual .trash gnupg git openssl wget \
     && wget -qO- https://dl.yarnpkg.com/debian/pubkey.gpg | gpg --import \
-    && wget https://yarnpkg.com/latest.tar.gz \
+    && wget --content-disposition https://yarnpkg.com/latest.tar.gz \
     && YARNV=$(ls | sed -n "s/^.*v\(\S*\).tar.gz\.*$/\1/p") \
     && wget -O keys.asc https://github.com/yarnpkg/yarn/releases/download/v${YARNV}/yarn-v${YARNV}.tar.gz.asc \
     && gpg --verify keys.asc yarn-v${YARNV}.tar.gz \
