@@ -25,7 +25,7 @@ stages:
     - docker login -u ${DOCKER_HUB_USER} -p ${DOCKER_HUB_PASSWORD}
     - docker pull jitesoft/node-yarn:${BUILD_TYPE}-slim
   script:
-    - BUILD=$(docker build --build-arg BUILD_TYPE=${BUILD_TYPE} -q -f full/Dockerfile)
+    - BUILD=$(docker build --build-arg BUILD_TYPE=${BUILD_TYPE} -q -f full/Dockerfile .)
     - NODE=$(docker inspect -f '{{range $index, $value := .Config.Env}}{{if eq (index (split $value "=") 0) "NODE_VERSION" }}{{range $i, $part := (split $value "=")}}{{if gt $i 1}}{{print "="}}{{end}}{{if gt $i 0}}{{print $part}}{{end}}{{end}}{{end}}{{end}}' ${BUILD})
     - YARN=$(docker run --rm ${BUILD} yarn -v)
     - NODE_SHORT="${NODE:0:1}"
