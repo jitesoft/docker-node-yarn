@@ -8,7 +8,7 @@ stages:
 .build:slim: &slim
   stage: slim
   before_script:
-    - docker login -u ${DOCKER_HUB_USER} -p ${DOCKER_HUB_PASSWORD}
+    - echo ${DOCKER_HUB_PASSWORD} | docker login -u ${DOCKER_HUB_USER} --password-stdin
     - docker pull jitesoft/node-base:${BUILD_TYPE}-slim
   script:
     - BUILD=$(docker build --build-arg BUILD_TYPE=${BUILD_TYPE} -q -f slim/Dockerfile .)
@@ -22,7 +22,7 @@ stages:
 .build:full: &full
   stage: full
   before_script:
-    - docker login -u ${DOCKER_HUB_USER} -p ${DOCKER_HUB_PASSWORD}
+    - echo ${DOCKER_HUB_PASSWORD} | docker login -u ${DOCKER_HUB_USER} --password-stdin
     - docker pull jitesoft/node-yarn:${BUILD_TYPE}-slim
   script:
     - BUILD=$(docker build --build-arg BUILD_TYPE=${BUILD_TYPE} -q -f full/Dockerfile .)
