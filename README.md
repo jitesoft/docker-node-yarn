@@ -6,7 +6,7 @@ Image is based on the  `jitesoft/node-base` repository.
 ## Tags and Dockerfiles
 
 * `9`, `latest` [Dockerfile](https://github.com/jitesoft/docker-node-yarn/blob/master/full/Dockerfile)
-* `8`, `lts`, `carbon`, `current`, `stable` [Dockerfile](https://github.com/jitesoft/docker-node-yarn/blob/master/full/Dockerfile)
+* `8`, `lts`, `dubnium`, `current`, `stable` [Dockerfile](https://github.com/jitesoft/docker-node-yarn/blob/master/full/Dockerfile)
 
 ### Slim versions
 
@@ -14,4 +14,4 @@ Slim versions does not include any of the additional dependencies (`git g++ gcc 
 You might have to install all (or some) of those to be able to install any packages though.
 
 * `9-slim`, `latest-slim` [Dockerfile](https://github.com/jitesoft/docker-node-yarn/blob/master/slim/Dockerfile)
-* `8-slim`, `lts-slim`, `carbon-slim`, `current-slim`, `stable-slim` [Dockerfile](https://github.com/jitesoft/docker-node-yarn/blob/master/slim/Dockerfile)
+* `8-slim`, `lts-slim`, `dubnium-slim`, `current-slim`, `stable-slim` [Dockerfile](https://github.com/jitesoft/docker-node-yarn/blob/master/slim/Dockerfile)

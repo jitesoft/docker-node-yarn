@@ -4,7 +4,6 @@ stages:
   - slim
   - full
 
-
 .build:slim: &slim
   stage: slim
   before_script:
@@ -37,7 +36,7 @@ build:slim:stable:
   <<: *slim
   variables:
     BUILD_TYPE: "stable"
-    EXTRA_TAGS: "stable-slim current-slim lts-slim carbon-slim current-slim"
+    EXTRA_TAGS: "stable-slim current-slim lts-slim dubnium-slim current-slim"
 
 build:slim:latest:
   <<: *slim
@@ -49,7 +48,7 @@ build:full:stable:
   <<: *full
   variables:
     BUILD_TYPE: "stable"
-    EXTRA_TAGS: "stable current lts carbon current"
+    EXTRA_TAGS: "stable current lts dubnium current"
 
 build:full:latest:
   <<: *full
