@@ -34,7 +34,7 @@ download:
     - echo ${CI_JOB_TOKEN} | docker login -u gitlab-ci-token registry.gitlab.com --password-stdin
     - echo ${DOCKER_HUB_PASSWORD} | docker login -u ${DOCKER_HUB_USER} --password-stdin
   script:
-    - docker build --tag ${CI_REGISTRY_IMAGE}:${CI_COMMIT_SHA} -f slim/Dockerfile .
+    - docker build --tag ${CI_REGISTRY_IMAGE}:${CI_COMMIT_SHA} --build-arg "NODE_VERSION=${VERSION}" -f slim/Dockerfile .
     - TAGS="${VERSION} ${EXTRA_ARGS}"
     - |
       for tag in ${TAGS}; do
@@ -43,7 +43,7 @@ download:
         docker push ${CI_REGISTRY_IMAGE}:${tag}-slim
         docker push ${IMAGE_NAME}:${tag}-slim
       done
-    - docker build --tag ${CI_REGISTRY_IMAGE}:${CI_COMMIT_SHA} -f full/Dockerfile .
+    - docker build --tag ${CI_REGISTRY_IMAGE}:${CI_COMMIT_SHA} --build-arg "NODE_VERSION=${VERSION}" -f full/Dockerfile .
     - |
       for tag in ${TAGS}; do
         docker tag ${CI_REGISTRY_IMAGE}:${CI_COMMIT_SHA} ${CI_REGISTRY_IMAGE}:${tag}
