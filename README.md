@@ -3,15 +3,26 @@
 Docker image with alpine linux, node.js and yarn.  
 Image is based on the  `jitesoft/node-base` repository.  
 
-## Tags and Dockerfiles
+### Full builds
 
-* `9`, `latest` [Dockerfile](https://github.com/jitesoft/docker-node-yarn/blob/master/full/Dockerfile)
-* `8`, `lts`, `dubnium`, `current`, `stable` [Dockerfile](https://github.com/jitesoft/docker-node-yarn/blob/master/full/Dockerfile)
+* `11`, `latest`
+* `10`, `stable`, `dubnium`
 
-### Slim versions
+### Slim builds
 
-Slim versions does not include any of the additional dependencies (`git g++ gcc wget make python openssl`), this to make the images smaller.  
-You might have to install all (or some) of those to be able to install any packages though.
+Due to adding a few core packages to the main branches of the image, two `slim` images have been introduced.  
+The slim images does not have `git g++ gcc wget make python openssl` packages installed hence decreasing the image size.
 
-* `9-slim`, `latest-slim` [Dockerfile](https://github.com/jitesoft/docker-node-yarn/blob/master/slim/Dockerfile)
-* `8-slim`, `lts-slim`, `dubnium-slim`, `current-slim`, `stable-slim` [Dockerfile](https://github.com/jitesoft/docker-node-yarn/blob/master/slim/Dockerfile)
+* `11-slim`, `latest-slim`
+* `10-slim`, `stable-slim`, `dubnium-slim`, `lts-slim`
+
+#### Old unmaintained images
+
+* `9`
+* `9-slim`
+* `8`, `carbon`
+* `8-slim`, `carbon-slim`
+
+## Docker files
+
+Docker files can be found at  [GitLab](https://gitlab.com/jitesoft/dockerfiles/node-yarn) or [GitHub](https://github.com/jitesoft/docker-node-yarn)

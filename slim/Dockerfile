@@ -1,18 +1,14 @@
-ARG BUILD_TYPE=""
-FROM jitesoft/node-base:${BUILD_TYPE}-slim
-LABEL maintainer="Johannes Tegnér <johannes@jitesoft.com>"
+FROM registry.gitlab.com/jitesoft/dockerfiles/node-base:${BUILD_TYPE}-slim
+LABEL maintainer="Johannes Tegnér <johannes@jitesoft.com>" \
+      maintainer.repo="https://gitlab.com/jitesoft/dockerfiles/node-yarn" \
+      maintainer.issues="https://gitlab.com/jitesoft/dockerfiles/node-yarn/issues"
 
 ENV PATH="$PATH:/yarn/bin"
 
-RUN apk add --no-cache --virtual .trash gnupg git openssl wget \
-    && wget -qO- https://dl.yarnpkg.com/debian/pubkey.gpg | gpg --import \
-    && wget --content-disposition https://yarnpkg.com/latest.tar.gz \
-    && YARNV=$(ls | sed -n "s/^.*v\(\S*\).tar.gz\.*$/\1/p") \
-    && wget -O keys.asc https://github.com/yarnpkg/yarn/releases/download/v${YARNV}/yarn-v${YARNV}.tar.gz.asc \
-    && gpg --verify keys.asc yarn-v${YARNV}.tar.gz \
-    && mkdir /yarn \
-    && tar -xzvf yarn-v${YARNV}.tar.gz -C /yarn --strip-components=1 \
-    && rm -r yarn-v${YARNV}.tar.gz keys.asc \
-    && apk del .trash
+COPY ./latest.tar.gz /
+
+RUN mkdir /yarn \
+ && tar -xzvf /latest.tar.gz -C /yarn --strip-components=1 \
+ && rm -r /latest.tar.gz
 
 CMD [ "yarn" ]

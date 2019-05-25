@@ -1,59 +1,65 @@
-image: docker:latest
-services:
-  - docker:dind
-
 stages:
-  - slim
-  - full
+  - download
+  - build
 
-.build:slim: &slim
-  stage: slim
+variables:
+  IMAGE_NAME: jitesoft/node-yarn
+
+download:
+  image: registry.gitlab.com/jitesoft/dockerfiles/alpine:latest
+  stage: download
+  variables:
+    GIT_STRATEGY: none
   before_script:
-    - echo ${DOCKER_HUB_PASSWORD} | docker login -u ${DOCKER_HUB_USER} --password-stdin
-    - docker pull jitesoft/node-base:${BUILD_TYPE}-slim
+    - apk add --no-cache gnupg
+    - wget -qO- https://dl.yarnpkg.com/debian/pubkey.gpg | gpg --import
   script:
-    - BUILD=$(docker build --build-arg BUILD_TYPE=${BUILD_TYPE} -q --network host -f slim/Dockerfile .)
-    - NODE=$(docker inspect -f '{{range $index, $value := .Config.Env}}{{if eq (index (split $value "=") 0) "NODE_VERSION" }}{{range $i, $part := (split $value "=")}}{{if gt $i 1}}{{print "="}}{{end}}{{if gt $i 0}}{{print $part}}{{end}}{{end}}{{end}}{{end}}' ${BUILD})
-    - YARN=$(docker run --rm ${BUILD} yarn -v)
-    - echo "Building for node v ${NODE} and Yarn v ${YARN} The image build hash is ${BUILD}"
-    - NODE_SHORT="${NODE:0:1}"
-    - TAGS="${NODE}-slim ${NODE_SHORT}-slim ${EXTRA_TAGS}"
-    - for tag in $TAGS; do docker tag $BUILD jitesoft/node-yarn:${tag}; docker push jitesoft/node-yarn:${tag}; done
+    - wget -q https://yarnpkg.com/latest.tar.gz
+    - wget -q https://yarnpkg.com/latest.tar.gz.asc
+    - gpg --verify latest.tar.gz.asc
+  artifacts:
+    when: on_success
+    name: yarn
+    paths:
+      - ./latest.tar.gz
 
-.build:full: &full
-  stage: full
+.build: &build
+  image: docker:latest
+  stage: build
+  services:
+    - docker:dind
+  dependencies:
+    - download
   before_script:
+    - echo ${CI_JOB_TOKEN} | docker login -u gitlab-ci-token registry.gitlab.com --password-stdin
     - echo ${DOCKER_HUB_PASSWORD} | docker login -u ${DOCKER_HUB_USER} --password-stdin
-    - docker pull jitesoft/node-yarn:${BUILD_TYPE}-slim
   script:
-    - BUILD=$(docker build --build-arg BUILD_TYPE=${BUILD_TYPE} -q --network host -f full/Dockerfile .)
-    - NODE=$(docker inspect -f '{{range $index, $value := .Config.Env}}{{if eq (index (split $value "=") 0) "NODE_VERSION" }}{{range $i, $part := (split $value "=")}}{{if gt $i 1}}{{print "="}}{{end}}{{if gt $i 0}}{{print $part}}{{end}}{{end}}{{end}}{{end}}' ${BUILD})
-    - YARN=$(docker run --rm ${BUILD} yarn -v)
-    - NODE_SHORT="${NODE:0:1}"
-    - TAGS="${NODE} ${NODE_SHORT} ${EXTRA_TAGS}"
-    - for tag in $TAGS; do docker tag $BUILD jitesoft/node-yarn:${tag}; docker push jitesoft/node-yarn:${tag}; done
-
+    - docker build --tag ${CI_REGISTRY_IMAGE}:${CI_COMMIT_SHA} -f slim/Dockerfile .
+    - TAGS="${VERSION} ${EXTRA_ARGS}"
+    - |
+      for tag in ${TAGS}; do
+        docker tag ${CI_REGISTRY_IMAGE}:${CI_COMMIT_SHA} ${CI_REGISTRY_IMAGE}:${tag}-slim
+        docker tag ${CI_REGISTRY_IMAGE}:${CI_COMMIT_SHA} ${IMAGE_NAME}:${tag}-slim
+        docker push ${CI_REGISTRY_IMAGE}:${tag}-slim
+        docker push ${IMAGE_NAME}:${tag}-slim
+      done
+    - docker build --tag ${CI_REGISTRY_IMAGE}:${CI_COMMIT_SHA} -f full/Dockerfile .
+    - |
+      for tag in ${TAGS}; do
+        docker tag ${CI_REGISTRY_IMAGE}:${CI_COMMIT_SHA} ${CI_REGISTRY_IMAGE}:${tag}
+        docker tag ${CI_REGISTRY_IMAGE}:${CI_COMMIT_SHA} ${IMAGE_NAME}:${tag}
+        docker push ${CI_REGISTRY_IMAGE}:${tag}
+        docker push ${IMAGE_NAME}:${tag}
+      done
 
 build:slim:stable:
-  <<: *slim
+  <<: *build
   variables:
-    BUILD_TYPE: "stable"
-    EXTRA_TAGS: "stable-slim current-slim lts-slim dubnium-slim current-slim"
+    VERSION: "10"
+    EXTRA_TAGS: "stable current lts dubnium"
 
 build:slim:latest:
-  <<: *slim
+  <<: *build
   variables:
-    BUILD_TYPE: "latest"
-    EXTRA_TAGS: "latest-slim"
-
-build:full:stable:
-  <<: *full
-  variables:
-    BUILD_TYPE: "stable"
-    EXTRA_TAGS: "stable current lts dubnium current"
-
-build:full:latest:
-  <<: *full
-  variables:
-    BUILD_TYPE: "latest"
+    VERSION: "12"
     EXTRA_TAGS: "latest"
