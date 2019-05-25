@@ -1,3 +1,4 @@
+ARG NODE_VERSION="12"
 FROM registry.gitlab.com/jitesoft/dockerfiles/node-base:${NODE_VERSION}-slim
 LABEL maintainer="Johannes Tegnér <johannes@jitesoft.com>" \
       maintainer.repo="https://gitlab.com/jitesoft/dockerfiles/node-yarn" \
