@@ -22,6 +22,7 @@ download:
     name: yarn
     paths:
       - ./latest.tar.gz
+    expire_in: 2 days
 
 .build: &build
   image: docker:latest
@@ -35,7 +36,7 @@ download:
     - echo ${DOCKER_HUB_PASSWORD} | docker login -u ${DOCKER_HUB_USER} --password-stdin
   script:
     - docker build --tag ${CI_REGISTRY_IMAGE}:${CI_COMMIT_SHA} --build-arg "NODE_VERSION=${VERSION}" -f slim/Dockerfile .
-    - TAGS="${VERSION} ${EXTRA_ARGS}"
+    - TAGS="${VERSION} ${EXTRA_TAGS}"
     - |
       for tag in ${TAGS}; do
         docker tag ${CI_REGISTRY_IMAGE}:${CI_COMMIT_SHA} ${CI_REGISTRY_IMAGE}:${tag}-slim
@@ -52,13 +53,13 @@ download:
         docker push ${IMAGE_NAME}:${tag}
       done
 
-build:slim:stable:
+build:stable:
   <<: *build
   variables:
     VERSION: "10"
     EXTRA_TAGS: "stable current lts dubnium"
 
-build:slim:latest:
+build:latest:
   <<: *build
   variables:
     VERSION: "12"
