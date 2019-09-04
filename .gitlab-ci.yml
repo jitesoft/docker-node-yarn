@@ -25,15 +25,10 @@ download:
     expire_in: 2 days
 
 .build: &build
-  image: docker:latest
+  image: registry.gitlab.com/jitesoft/dockerfiles/docker:latest
   stage: build
-  services:
-    - docker:dind
   dependencies:
     - download
-  before_script:
-    - echo ${CI_JOB_TOKEN} | docker login -u gitlab-ci-token registry.gitlab.com --password-stdin
-    - echo ${DOCKER_HUB_PASSWORD} | docker login -u ${DOCKER_HUB_USER} --password-stdin
   script:
     - docker build --tag ${CI_REGISTRY_IMAGE}:${CI_COMMIT_SHA} --build-arg "NODE_VERSION=${VERSION}" -f slim/Dockerfile .
     - TAGS="${VERSION} ${EXTRA_TAGS}"

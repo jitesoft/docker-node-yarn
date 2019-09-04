@@ -1,5 +1,8 @@
 # Node-Yarn
 
+[![Docker Pulls](https://img.shields.io/docker/pulls/jitesoft/node-yarn.svg)](https://cloud.docker.com/u/jitesoft/repository/docker/jitesoft/node-yarn)
+[![Back project](https://img.shields.io/badge/Open%20Collective-Tip%20the%20devs!-blue.svg)](https://opencollective.com/jitesoft-open-source)
+
 Docker image with alpine linux, node.js and yarn.  
 Image is based on the  `jitesoft/node-base` repository.  
 
@@ -32,3 +35,9 @@ Docker files can be found at  [GitLab](https://gitlab.com/jitesoft/dockerfiles/n
 ### Image labels
 
 This image follows the [Jitesoft image label specification 1.0.0](https://gitlab.com/snippets/1866155).
+
+## Licenses
+
+Files in this repository are released under the MIT license.  
+Read the nodejs license [here](https://github.com/nodejs/node/blob/master/LICENSE).  
+Yarn is released under the [BSD 2-Clause](https://github.com/yarnpkg/yarn/blob/master/LICENSE) license.
