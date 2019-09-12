@@ -1,6 +1,7 @@
 stages:
   - download
   - build
+  - scan
 
 variables:
   IMAGE_NAME: jitesoft/node-yarn
@@ -59,3 +60,19 @@ build:latest:
   variables:
     VERSION: "12"
     EXTRA_TAGS: "latest"
+
+scan:stable:
+  needs:
+    - build:stable
+  extends: .container_scanning
+  variables:
+    GIT_STRATEGY: none
+    SCANNING_IMAGE_NAME: ${CI_REGISTRY_IMAGE}:stable
+
+scan:latest:
+  needs:
+    - build:latest
+  extends: .container_scanning
+  variables:
+    GIT_STRATEGY: none
+    SCANNING_IMAGE_NAME: ${CI_REGISTRY_IMAGE}:latest
