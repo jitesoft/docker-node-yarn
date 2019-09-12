@@ -1,3 +1,6 @@
+include:
+  - https://gitlab.com/jitesoft/gitlab-ci-lib/raw/master/container_scan-v2.yml
+
 stages:
   - download
   - build
