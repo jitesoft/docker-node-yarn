@@ -34,20 +34,20 @@ download:
   dependencies:
     - download
   script:
-    - docker build --tag ${CI_REGISTRY_IMAGE}:${CI_COMMIT_SHA} --build-arg "NODE_VERSION=${VERSION}" -f slim/Dockerfile .
+    - docker build --tag ${CI_REGISTRY_IMAGE}:${CI_COMMIT_SHA}-${VERSION} --build-arg "NODE_VERSION=${VERSION}" -f slim/Dockerfile .
     - TAGS="${VERSION} ${EXTRA_TAGS}"
     - |
       for tag in ${TAGS}; do
-        docker tag ${CI_REGISTRY_IMAGE}:${CI_COMMIT_SHA} ${CI_REGISTRY_IMAGE}:${tag}-slim
-        docker tag ${CI_REGISTRY_IMAGE}:${CI_COMMIT_SHA} ${IMAGE_NAME}:${tag}-slim
+        docker tag ${CI_REGISTRY_IMAGE}:${CI_COMMIT_SHA}-${VERSION} ${CI_REGISTRY_IMAGE}:${tag}-slim
+        docker tag ${CI_REGISTRY_IMAGE}:${CI_COMMIT_SHA}-${VERSION} ${IMAGE_NAME}:${tag}-slim
         docker push ${CI_REGISTRY_IMAGE}:${tag}-slim
         docker push ${IMAGE_NAME}:${tag}-slim
       done
-    - docker build --tag ${CI_REGISTRY_IMAGE}:${CI_COMMIT_SHA} --build-arg "NODE_VERSION=${VERSION}" -f full/Dockerfile .
+    - docker build --tag ${CI_REGISTRY_IMAGE}:${CI_COMMIT_SHA}-${VERSION} --build-arg "NODE_VERSION=${VERSION}" -f full/Dockerfile .
     - |
       for tag in ${TAGS}; do
-        docker tag ${CI_REGISTRY_IMAGE}:${CI_COMMIT_SHA} ${CI_REGISTRY_IMAGE}:${tag}
-        docker tag ${CI_REGISTRY_IMAGE}:${CI_COMMIT_SHA} ${IMAGE_NAME}:${tag}
+        docker tag ${CI_REGISTRY_IMAGE}:${CI_COMMIT_SHA}-${VERSION} ${CI_REGISTRY_IMAGE}:${tag}
+        docker tag ${CI_REGISTRY_IMAGE}:${CI_COMMIT_SHA}-${VERSION} ${IMAGE_NAME}:${tag}
         docker push ${CI_REGISTRY_IMAGE}:${tag}
         docker push ${IMAGE_NAME}:${tag}
       done
