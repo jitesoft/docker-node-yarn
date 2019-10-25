@@ -29,40 +29,30 @@ download:
     expire_in: 2 days
 
 .build: &build
-  image: registry.gitlab.com/jitesoft/dockerfiles/docker:latest
+  image: registry.gitlab.com/jitesoft/dockerfiles/misc:latest
   stage: build
   dependencies:
     - download
   script:
-    - docker build --tag ${CI_REGISTRY_IMAGE}:${CI_COMMIT_SHA}-${VERSION} --build-arg "NODE_VERSION=${VERSION}" -f slim/Dockerfile .
-    - TAGS="${VERSION} ${EXTRA_TAGS}"
-    - |
-      for tag in ${TAGS}; do
-        docker tag ${CI_REGISTRY_IMAGE}:${CI_COMMIT_SHA}-${VERSION} ${CI_REGISTRY_IMAGE}:${tag}-slim
-        docker tag ${CI_REGISTRY_IMAGE}:${CI_COMMIT_SHA}-${VERSION} ${IMAGE_NAME}:${tag}-slim
-        docker push ${CI_REGISTRY_IMAGE}:${tag}-slim
-        docker push ${IMAGE_NAME}:${tag}-slim
-      done
-    - docker build --tag ${CI_REGISTRY_IMAGE}:${CI_COMMIT_SHA}-${VERSION} --build-arg "NODE_VERSION=${VERSION}" -f full/Dockerfile .
-    - |
-      for tag in ${TAGS}; do
-        docker tag ${CI_REGISTRY_IMAGE}:${CI_COMMIT_SHA}-${VERSION} ${CI_REGISTRY_IMAGE}:${tag}
-        docker tag ${CI_REGISTRY_IMAGE}:${CI_COMMIT_SHA}-${VERSION} ${IMAGE_NAME}:${tag}
-        docker push ${CI_REGISTRY_IMAGE}:${tag}
-        docker push ${IMAGE_NAME}:${tag}
-      done
+    - TAGS=$(helper "${CI_REGISTRY_IMAGE},jitesoft/node-yarn" "${VERSION}-slim,${EXTRA_TAGS_SLIM}")
+    - docker buildx build --platform linux/arm64,linux/amd64 --progress plain --push ${TAGS} --build-arg "NODE_VERSION=${VERSION}" -f slim/Dockerfile .
+    - TAGS=$(helper "${CI_REGISTRY_IMAGE},jitesoft/node-yarn" "${VERSION},${EXTRA_TAGS}")
+    - docker buildx build --platform linux/arm64,linux/amd64 --progress plain --push ${TAGS} --build-arg "NODE_VERSION=${VERSION}" -f full/Dockerfile .
+
 
 build:stable:
   <<: *build
   variables:
-    VERSION: "10"
-    EXTRA_TAGS: "stable current lts dubnium"
+    VERSION: "12"
+    EXTRA_TAGS: "stable,lts,erbium"
+    EXTRA_TAGS_SLIM: "stable-slim,lts-slim,erbium-slim"
 
 build:latest:
   <<: *build
   variables:
-    VERSION: "12"
+    VERSION: "13"
     EXTRA_TAGS: "latest"
+    EXTRA_TAGS_SLIM: "latest-slim"
 
 scan:stable:
   needs:
