@@ -6,23 +6,33 @@
 Docker image with alpine linux, node.js and yarn.  
 Image is based on the  `jitesoft/node-base` repository.  
 
+Images are built for x86_64 and aarch64 and the latest and lts versions are actively maintained.
+
 ### Full builds
 
-* `12`, `latest`
-* `10`, `stable`, `dubnium`
+* `13`, `latest`
+* `12`, `stable`, `lts`, `erbium`
+
+Unmaintained: 
 
 ### Slim builds
 
 Due to adding a few core packages to the main branches of the image, two `slim` images have been introduced.  
 The slim images does not have `git g++ gcc wget make python openssl` packages installed hence decreasing the image size.
 
-* `12-slim`, `latest-slim`
-* `10-slim`, `stable-slim`, `dubnium-slim`, `lts-slim`
+* `13-slim`, `latest-slim`
+* `12-slim`, `stable-slim`, `erbium-slim`, `lts-slim`
 
 #### Old unmaintained images
 
 * `11`
 * `11-slim`
+* `10`
+* `dubnium` 
+* `current`
+* `10-slim`
+* `dubnium-slim` 
+* `current-slim`
 * `9`
 * `9-slim`
 * `8`, `carbon`
