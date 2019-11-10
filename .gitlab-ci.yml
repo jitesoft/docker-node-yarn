@@ -38,7 +38,10 @@ download:
     - docker buildx build --platform linux/arm64,linux/amd64 --progress plain --push ${TAGS} --build-arg "NODE_VERSION=${VERSION}" -f slim/Dockerfile .
     - TAGS=$(helper "${CI_REGISTRY_IMAGE},jitesoft/node-yarn" "${VERSION},${EXTRA_TAGS}")
     - docker buildx build --platform linux/arm64,linux/amd64 --progress plain --push ${TAGS} --build-arg "NODE_VERSION=${VERSION}" -f full/Dockerfile .
-
+  tags:
+    - jitesoft
+    - buildx
+    - protected
 
 build:stable:
   <<: *build
