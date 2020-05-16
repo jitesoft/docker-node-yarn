@@ -25,14 +25,12 @@ The slim images does not have `git g++ gcc wget make python openssl` packages in
 
 #### Old unmaintained images
 
+* `current`
+* `current-slim`
 * `11`
 * `11-slim`
-* `10`
-* `dubnium` 
-* `current`
-* `10-slim`
-* `dubnium-slim` 
-* `current-slim`
+* `10`, `dubnium`
+* `10-slim`, `dubnium-slim`
 * `9`
 * `9-slim`
 * `8`, `carbon`
