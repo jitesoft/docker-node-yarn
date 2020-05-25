@@ -1,10 +1,6 @@
 include:
   - https://gitlab.com/jitesoft/gitlab-ci-lib/raw/master/Scan/trivy.yml
 
-default:
-  variables:
-    NO_AUTO: true
-
 stages:
   - download
   - build
@@ -12,6 +8,7 @@ stages:
 
 variables:
   IMAGE_NAME: jitesoft/node-yarn
+  NO_AUTO: "true"
 
 download:
   image: registry.gitlab.com/jitesoft/dockerfiles/alpine:latest
