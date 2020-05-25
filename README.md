@@ -10,7 +10,7 @@ Images are built for x86_64 and aarch64 and the latest and lts versions are acti
 
 ### Full builds
 
-* `13`, `latest`
+* `14`, `latest`
 * `12`, `stable`, `lts`, `erbium`
 
 Unmaintained: 
@@ -20,11 +20,13 @@ Unmaintained:
 Due to adding a few core packages to the main branches of the image, two `slim` images have been introduced.  
 The slim images does not have `git g++ gcc wget make python openssl` packages installed hence decreasing the image size.
 
-* `13-slim`, `latest-slim`
+* `14-slim`, `latest-slim`
 * `12-slim`, `stable-slim`, `erbium-slim`, `lts-slim`
 
 #### Old unmaintained images
 
+* `13`
+* `13-slim`
 * `current`
 * `current-slim`
 * `11`
