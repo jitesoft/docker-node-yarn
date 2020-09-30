@@ -1,19 +1,19 @@
+# syntax=docker/dockerfile:experimental
 ARG NODE_VERSION="12"
-FROM registry.gitlab.com/jitesoft/dockerfiles/node-base:${NODE_VERSION}
+ARG NODE_IMAGE="node-base/full"
+FROM registry.gitlab.com/jitesoft/dockerfiles/${NODE_IMAGE}:${NODE_VERSION}
+ARG YARN_VERSION
 LABEL maintainer="Johannes Tegnér <johannes@jitesoft.com>" \
       maintainer.org="Jitesoft" \
       maintainer.org.uri="https://jitesoft.com" \
       com.jitesoft.project.repo.type="git" \
       com.jitesoft.project.repo.uri="https://gitlab.com/jitesoft/dockerfiles/node-yarn" \
       com.jitesoft.project.repo.issues="https://gitlab.com/jitesoft/dockerfiles/node-yarn/issues" \
-      com.jitesoft.project.registry.uri="registry.gitlab.com/jitesoft/dockerfiles/node-yarn"
+      com.jitesoft.project.registry.uri="registry.gitlab.com/jitesoft/dockerfiles/node-yarn" \
+      com.jitesoft.app.yarn.version="${YARN_VERSION}"
 
 ENV PATH="$PATH:/yarn/bin"
-
-COPY ./latest.tar.gz /
-
-RUN mkdir /yarn \
- && tar -xzvf /latest.tar.gz -C /yarn --strip-components=1 \
- && rm -r /latest.tar.gz
+RUN --mount=type=bind,source=./binaries,target=/tmp \
+    tar -xzf /tmp/latest.tar.gz -C /yarn --strip-components=1
 
 CMD [ "yarn" ]
