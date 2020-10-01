@@ -32,7 +32,7 @@ stages:
       - versions.txt
 
 trigger:
-  extends: check
+  extends: .check
   rules:
     - if: '$CI_PIPELINE_SOURCE == "trigger"'
       when: always
@@ -43,7 +43,7 @@ schedule:
     matrix:
       - { NODE_MAJOR: "12", TYPE: "lts" }
       - { NODE_MAJOR: "14", TYPE: "latest" }
-  extends: check
+  extends: .check
   rules:
     - if: '$CI_PIPELINE_SOURCE == "schedule"'
       when: always
