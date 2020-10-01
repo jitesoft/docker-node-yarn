@@ -30,7 +30,7 @@ check:
     - when: never
   before_script:
     - touch versions.txt
-    - if [ ! -z "${FULL_VERSION+x}" ]; then export FULL_VERSION="$(cat node-version.txt)"; fi
+    - if [ ! -z "${FULL_VERSION+x}" ]; then export FULL_VERSION="$(cat versions.txt)"; fi
   script:
     - YARN_VERSION=$(wget -qO- https://api.github.com/repos/yarnpkg/yarn/releases | jq -r ".[0].tag_name")
     - |
