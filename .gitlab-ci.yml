@@ -25,7 +25,7 @@ stages:
         curl -F token=${CI_JOB_TOKEN} -F ref=master -F "variables[NODE_MAJOR]=${NODE_MAJOR}" -F "variables[YARN_VERSION]=${YARN_VERSION}" -F "variables[TYPE]=${TYPE}" -F "variables[BUILD]=true" https://gitlab.com/api/v4/projects/${CI_PROJECT_ID}/trigger/pipeline
       else
         echo "Old image. Starting scan."
-        curl -F token=${CI_JOB_TOKEN} -F ref=master -F "variables[NODE_VERSION]=${NODE_MAJOR}" -F "variables[SCAN]=true" https://gitlab.com/api/v4/projects/${CI_PROJECT_ID}/trigger/pipeline
+        curl -F token=${CI_JOB_TOKEN} -F ref=master -F "variables[NODE_MAJOR]=${NODE_MAJOR}" -F "variables[SCAN]=true" https://gitlab.com/api/v4/projects/${CI_PROJECT_ID}/trigger/pipeline
       fi
   cache:
     policy: pull
@@ -113,7 +113,7 @@ containerize:
     - TAG_SUFFIX=""
     - if [ "${TYPE}" == "slim" ]; then TAG_SUFFIX="-slim"; fi
     - TAGS=$(helper "${CI_REGISTRY_IMAGE},jitesoft/node-yarn,ghcr.io/jitesoft/node-yarn" "${NODE_MAJOR}${TAG_SUFFIX},${TYPE}${TAG_SUFFIX}")
-    - docker builx build --platform linux/arm64,linux/amd64 --push ${TAGS} --progress plain --build-arg "YARN_VERSION=${YARN_VERSION}" --build-arg "NODE_VERSION=${NODE_MAJOR}" --build-arg "NODE_IMAGE=${NODE_IMAGE}" .
+    - docker buildx build --platform linux/arm64,linux/amd64 --push ${TAGS} --progress plain --build-arg "YARN_VERSION=${YARN_VERSION}" --build-arg "NODE_MAJOR=${NODE_MAJOR}" --build-arg "NODE_IMAGE=${NODE_IMAGE}" .
   tags:
     - protected
     - buildx
@@ -140,7 +140,7 @@ notify:trivy:
       when: on_success
   script:
     - echo "Notifying scanner."
-    - curl -F token=${CI_JOB_TOKEN} -F ref=master -F "variables[NODE_VERSION]=${NODE_MAJOR}" -F "variables[SCAN]=true" https://gitlab.com/api/v4/projects/${CI_PROJECT_ID}/trigger/pipeline
+    - curl -F token=${CI_JOB_TOKEN} -F ref=master -F "variables[NODE_MAJOR]=${NODE_MAJOR}" -F "variables[SCAN]=true" https://gitlab.com/api/v4/projects/${CI_PROJECT_ID}/trigger/pipeline
 
 scan:
   parallel:
