@@ -1,7 +1,6 @@
 # syntax=docker/dockerfile:experimental
-ARG NODE_MAJOR="12"
-ARG NODE_IMAGE="node-base/full"
-FROM registry.gitlab.com/jitesoft/dockerfiles/${NODE_IMAGE}:${NODE_MAJOR}
+ARG NODE_IMAGE="node-base/full:14"
+FROM registry.gitlab.com/jitesoft/dockerfiles/${NODE_IMAGE}
 ARG YARN_VERSION
 LABEL maintainer="Johannes Tegnér <johannes@jitesoft.com>" \
       maintainer.org="Jitesoft" \
