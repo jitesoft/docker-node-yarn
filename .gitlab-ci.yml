@@ -7,10 +7,6 @@ stages:
   - containerize
   - scan
 
-variables:
-  IMAGE_NAME: jitesoft/node-yarn
-  NO_AUTO: "true"
-
 check:
   parallel:
     matrix:
@@ -36,7 +32,7 @@ check:
     - |
       if [ "${YARN_VERSION}-${FULL_VERSION}" !== "$(cat versions.txt)" ]; then
         echo "New version. Building new image."
-        curl -F token=${CI_JOB_TOKEN} -F ref=master -F "variables[NODE_VERSION]=${NODE_VERSION}" -F "variables[NODE_MAJOR]=${NODE_MAJOR}" -F "variables[YARN_VERSION]=${YARN_VERSION}" -F "variables[TYPE]=${TYPE}" -F "variables[BUILD]=true" https://gitlab.com/api/v4/projects/${CI_PROJECT_ID}/trigger/pipeline
+        curl -F token=${CI_JOB_TOKEN} -F ref=master -F "variables[NODE_MAJOR]=${NODE_MAJOR}" -F "variables[YARN_VERSION]=${YARN_VERSION}" -F "variables[TYPE]=${TYPE}" -F "variables[BUILD]=true" https://gitlab.com/api/v4/projects/${CI_PROJECT_ID}/trigger/pipeline
       else
         echo "Old image. Starting scan."
         curl -F token=${CI_JOB_TOKEN} -F ref=master -F "variables[NODE_VERSION]=${NODE_MAJOR}" -F "variables[SCAN]=true" https://gitlab.com/api/v4/projects/${CI_PROJECT_ID}/trigger/pipeline
@@ -99,7 +95,7 @@ create:cache:
     - if: "$BUILD"
       when: on_success
   script:
-    - echo "${YARN_VERSION}-${NODE_VERSION}" > versions.txt
+    - echo "${YARN_VERSION}-${NODE_MAJOR}" > versions.txt
   cache:
     policy: push
     key: yarn-major-${NODE_MAJOR}
@@ -129,4 +125,4 @@ scan:
   extends: .container_scanning
   before_script:
     - if [ "${TYPE}" === "slim" ]; then TAG_SUFFIX="slim"; fi
-    -  export SCANNING_IMAGE_NAME="${IMAGE}:${NODE_VERSION}"${TAG_SUFFIX}"
+    -  export SCANNING_IMAGE_NAME="${IMAGE}:${NODE_MAJOR}"${TAG_SUFFIX}"
