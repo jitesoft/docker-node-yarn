@@ -1,6 +1,12 @@
 include:
   - https://gitlab.com/jitesoft/gitlab-ci-lib/raw/master/Scan/trivy.yml
 
+workflow:
+  rules:
+    - if: "$CI_COMMIT_BRANCH == 'master'"
+      when: always
+    - when: never
+
 stages:
   - pre
   - download
@@ -11,14 +17,29 @@ stages:
   image: registry.gitlab.com/jitesoft/dockerfiles/misc:latest
   variables:
     GIT_STRATEGY: none
+    DEFAULT_CHECK: "0-0"
   stage: pre
   before_script:
     - touch versions.txt
-    - if [ ! -z "${FULL_VERSION+x}" ]; then export FULL_VERSION="$(cat versions.txt)"; fi
   script:
     - YARN_VERSION=$(wget -qO- https://api.github.com/repos/yarnpkg/yarn/releases | jq -r ".[0].tag_name")
+    - SHOULD_BUILD="false"
     - |
-      if [ "${YARN_VERSION}-${FULL_VERSION}" !== "$(cat versions.txt)" ]; then
+      if [ "${CI_PIPELINE_SOURCE}" == "trigger" ]; then
+        if [ "${YARN_VERSION}-${FULL_VERSION}" !== "$(cat versions.txt)" ]; then
+          echo "New version. Building new image."
+          SHOULD_BUILD="true"
+        fi
+      else
+        FULL_CHECK=$(cat versions.txt)
+        FULL_CHECK="${FULL_CHECK:-$DEFAULT_CHECK}"
+        VERSIONS=(${FULL_CHECK//-/ })
+        if [ "${VERSIONS[0]} != "${YARN_VERSION}" ]; then
+          SHOULD_BUILD="true"
+        fi
+      fi
+    - |
+      if [ "${SHOULD_BUILD}" == "true" ]; then
         echo "New version. Building new image."
         curl -F token=${CI_JOB_TOKEN} -F ref=master -F "variables[NODE_MAJOR]=${NODE_MAJOR}" -F "variables[YARN_VERSION]=${YARN_VERSION}" -F "variables[TYPE]=${TYPE}" -F "variables[BUILD]=true" https://gitlab.com/api/v4/projects/${CI_PROJECT_ID}/trigger/pipeline
       else
