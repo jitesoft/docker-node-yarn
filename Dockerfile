@@ -13,6 +13,7 @@ LABEL maintainer="Johannes Tegnér <johannes@jitesoft.com>" \
 
 ENV PATH="$PATH:/yarn/bin"
 RUN --mount=type=bind,source=./binaries,target=/tmp \
-    tar -xzf /tmp/latest.tar.gz -C /yarn --strip-components=1
+    mkdir /yarn \
+ && tar -xzf /tmp/latest.tar.gz -C /yarn --strip-components=1
 
 CMD [ "yarn" ]
