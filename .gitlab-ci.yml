@@ -7,17 +7,11 @@ stages:
   - containerize
   - scan
 
-check:
+.check:
   image: registry.gitlab.com/jitesoft/dockerfiles/misc:latest
   variables:
     GIT_STRATEGY: none
   stage: pre
-  rules:
-    - if: '$CI_PIPELINE_SOURCE == "schedule"'
-      when: always
-    - if: '$CI_PIPELINE_SOURCE == "web"'
-      when: always
-    - when: never
   before_script:
     - touch versions.txt
     - if [ ! -z "${FULL_VERSION+x}" ]; then export FULL_VERSION="$(cat versions.txt)"; fi
@@ -41,6 +35,19 @@ trigger:
   extends: check
   rules:
     - if: '$CI_PIPELINE_SOURCE == "trigger"'
+      when: always
+    - when: never
+
+schedule:
+  parallel:
+    matrix:
+      - { NODE_MAJOR: "12", TYPE: "lts" }
+      - { NODE_MAJOR: "14", TYPE: "latest" }
+  extends: check
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "schedule"'
+      when: always
+    - if: '$CI_PIPELINE_SOURCE == "web"'
       when: always
     - when: never
 
