@@ -66,10 +66,9 @@ schedule:
     - YARN_VERSION=$(wget -qO- https://api.github.com/repos/yarnpkg/yarn/releases | jq -r ".[0].tag_name")
     - DEFAULT_CHECK="0-0"
     - FULL_CHECK=$(cat versions.txt)
-    - FULL_CHECK="${FULL_CHECK:-$DEFAULT_CHECK}"
-    - IFS='-' read -a versions <<< "${FULL_CHECK}"
+    - OLD_YARN_VERSION=$(echo "${FULL_CHECK:-$DEFAULT_CHECK}" | cut -d'-' -f 1)
     - |
-      if [ "${VERSIONS[0]} != "${YARN_VERSION}" ]; then
+      if [ "${OLD_YARN_VERSION}" != "${YARN_VERSION}" ]; then
         echo "Yarn version did not match, should build new image."
         SHOULD_BUILD="true"
       fi
