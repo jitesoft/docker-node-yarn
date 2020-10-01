@@ -18,9 +18,22 @@ stages:
   variables:
     GIT_STRATEGY: none
   stage: pre
+  parallel:
+    matrix:
+      - { NODE_MAJOR: "12", TYPE: "lts" }
+      - { NODE_MAJOR: "14", TYPE: "latest" }
+  extends: .check
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "schedule"'
+      when: always
+    - if: '$CI_PIPELINE_SOURCE == "web"'
+      when: always
+    - when: never
   script:
+    - touch versions.txt
+    - YARN_VERSION=$(wget -qO- https://api.github.com/repos/yarnpkg/yarn/releases | jq -r ".[0].tag_name")
     - |
-      if [ "${SHOULD_BUILD}" == "true" ]; then
+      if [ "$(cat versions.txt)" != "${YARN_VERSION}" ]; then
         echo "New version. Building new image."
         curl -F token=${CI_JOB_TOKEN} -F ref=master -F "variables[NODE_MAJOR]=${NODE_MAJOR}" -F "variables[YARN_VERSION]=${YARN_VERSION}" -F "variables[TYPE]=${TYPE}" -F "variables[BUILD]=true" https://gitlab.com/api/v4/projects/${CI_PROJECT_ID}/trigger/pipeline
       else
@@ -33,45 +46,20 @@ stages:
     paths:
       - versions.txt
 
+# Trigger should always build, due to the fact that node image only triggers if there is a new node version!
 trigger:
-  extends: .check
+  image: registry.gitlab.com/jitesoft/dockerfiles/misc:latest
+  variables:
+    GIT_STRATEGY: none
+  stage: pre
   rules:
     - if: '$CI_PIPELINE_SOURCE == "trigger"'
       when: always
     - when: never
-  before_script:
-    - touch versions.txt
+  script:
+    - echo "Triggered from node. Running full build."
     - YARN_VERSION=$(wget -qO- https://api.github.com/repos/yarnpkg/yarn/releases | jq -r ".[0].tag_name")
-    - SHOULD_BUILD="false"
-    - |
-      if [ "${YARN_VERSION}-${FULL_VERSION}" !== "$(cat versions.txt)" ]; then
-        echo "Version did not match, should build new image."
-        SHOULD_BUILD="true"
-      fi
-
-schedule:
-  parallel:
-    matrix:
-      - { NODE_MAJOR: "12", TYPE: "lts" }
-      - { NODE_MAJOR: "14", TYPE: "latest" }
-  extends: .check
-  rules:
-    - if: '$CI_PIPELINE_SOURCE == "schedule"'
-      when: always
-    - if: '$CI_PIPELINE_SOURCE == "web"'
-      when: always
-    - when: never
-  before_script:
-    - touch versions.txt
-    - YARN_VERSION=$(wget -qO- https://api.github.com/repos/yarnpkg/yarn/releases | jq -r ".[0].tag_name")
-    - DEFAULT_CHECK="0-0"
-    - FULL_CHECK=$(cat versions.txt)
-    - OLD_YARN_VERSION=$(echo "${FULL_CHECK:-$DEFAULT_CHECK}" | cut -d'-' -f 1)
-    - |
-      if [ "${OLD_YARN_VERSION}" != "${YARN_VERSION}" ]; then
-        echo "Yarn version did not match, should build new image."
-        SHOULD_BUILD="true"
-      fi
+    - curl -F token=${CI_JOB_TOKEN} -F ref=master -F "variables[NODE_MAJOR]=${NODE_MAJOR}" -F "variables[YARN_VERSION]=${YARN_VERSION}" -F "variables[TYPE]=${TYPE}" -F "variables[BUILD]=true" https://gitlab.com/api/v4/projects/${CI_PROJECT_ID}/trigger/pipeline
 
 download:
   image:  registry.gitlab.com/jitesoft/dockerfiles/misc:latest
@@ -125,7 +113,7 @@ create:cache:
     - if: "$BUILD"
       when: on_success
   script:
-    - echo "${YARN_VERSION}-${NODE_MAJOR}" > versions.txt
+    - echo "${YARN_VERSION}" > versions.txt
   cache:
     policy: push
     key: yarn-major-${NODE_MAJOR}
