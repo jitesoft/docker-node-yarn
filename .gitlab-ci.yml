@@ -13,7 +13,7 @@ stages:
   - containerize
   - scan
 
-.check:
+check:
   image: registry.gitlab.com/jitesoft/dockerfiles/misc:latest
   variables:
     GIT_STRATEGY: none
@@ -22,7 +22,6 @@ stages:
     matrix:
       - { NODE_MAJOR: "12", TYPE: "lts" }
       - { NODE_MAJOR: "14", TYPE: "latest" }
-  extends: .check
   rules:
     - if: '$CI_PIPELINE_SOURCE == "schedule"'
       when: always
