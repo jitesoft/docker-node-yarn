@@ -18,8 +18,6 @@ stages:
   variables:
     GIT_STRATEGY: none
   stage: pre
-  before_script:
-    - touch versions.txt
   script:
     - |
       if [ "${SHOULD_BUILD}" == "true" ]; then
@@ -42,6 +40,7 @@ trigger:
       when: always
     - when: never
   before_script:
+    - touch versions.txt
     - YARN_VERSION=$(wget -qO- https://api.github.com/repos/yarnpkg/yarn/releases | jq -r ".[0].tag_name")
     - SHOULD_BUILD="false"
     - |
@@ -63,6 +62,7 @@ schedule:
       when: always
     - when: never
   before_script:
+    - touch versions.txt
     - YARN_VERSION=$(wget -qO- https://api.github.com/repos/yarnpkg/yarn/releases | jq -r ".[0].tag_name")
     - DEFAULT_CHECK="0-0"
     - FULL_CHECK=$(cat versions.txt)
