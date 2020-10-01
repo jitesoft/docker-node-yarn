@@ -142,4 +142,4 @@ scan:
   extends: .container_scanning
   before_script:
     - if [ "${TYPE}" == "slim" ]; then TAG_SUFFIX="slim"; fi
-    - export SCANNING_IMAGE_NAME="${IMAGE}:${FULL_VERSION:-NODE_MAJOR}${TAG_SUFFIX}"
+    - export SCANNING_IMAGE_NAME="${IMAGE}:${FULL_VERSION:-$NODE_MAJOR}${TAG_SUFFIX}"
