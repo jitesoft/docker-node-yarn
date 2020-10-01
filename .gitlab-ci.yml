@@ -8,10 +8,6 @@ stages:
   - scan
 
 check:
-  parallel:
-    matrix:
-      - { "NODE_MAJOR": "12", TYPE: "lts" }
-      - { "NODE_MAJOR": "14", TYPE: "stable" }
   image: registry.gitlab.com/jitesoft/dockerfiles/misc:latest
   variables:
     GIT_STRATEGY: none
@@ -20,8 +16,6 @@ check:
     - if: '$CI_PIPELINE_SOURCE == "schedule"'
       when: always
     - if: '$CI_PIPELINE_SOURCE == "web"'
-      when: always
-    - if: '$CI_PIPELINE_SOURCE == "trigger"'
       when: always
     - when: never
   before_script:
@@ -42,6 +36,13 @@ check:
     key: yarn-major-${NODE_MAJOR}
     paths:
       - versions.txt
+
+trigger:
+  extends: check
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "trigger"'
+      when: always
+    - when: never
 
 download:
   image:  registry.gitlab.com/jitesoft/dockerfiles/misc:latest
