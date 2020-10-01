@@ -70,6 +70,7 @@ download:
       - binaries/
 
 containerize:
+  stage: containerize
   parallel:
     matrix:
       - { TYPE: "slim", TAG_SUFFIX: "-slim", NODE_IMAGE: "node-base" }
