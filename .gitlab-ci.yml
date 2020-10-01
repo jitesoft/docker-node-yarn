@@ -17,27 +17,10 @@ stages:
   image: registry.gitlab.com/jitesoft/dockerfiles/misc:latest
   variables:
     GIT_STRATEGY: none
-    DEFAULT_CHECK: "0-0"
   stage: pre
   before_script:
     - touch versions.txt
   script:
-    - YARN_VERSION=$(wget -qO- https://api.github.com/repos/yarnpkg/yarn/releases | jq -r ".[0].tag_name")
-    - SHOULD_BUILD="false"
-    - |
-      if [ "${CI_PIPELINE_SOURCE}" == "trigger" ]; then
-        if [ "${YARN_VERSION}-${FULL_VERSION}" !== "$(cat versions.txt)" ]; then
-          echo "New version. Building new image."
-          SHOULD_BUILD="true"
-        fi
-      else
-        FULL_CHECK=$(cat versions.txt)
-        FULL_CHECK="${FULL_CHECK:-$DEFAULT_CHECK}"
-        VERSIONS=(${FULL_CHECK//-/ })
-        if [ "${VERSIONS[0]} != "${YARN_VERSION}" ]; then
-          SHOULD_BUILD="true"
-        fi
-      fi
     - |
       if [ "${SHOULD_BUILD}" == "true" ]; then
         echo "New version. Building new image."
@@ -58,6 +41,14 @@ trigger:
     - if: '$CI_PIPELINE_SOURCE == "trigger"'
       when: always
     - when: never
+  before_script:
+    - YARN_VERSION=$(wget -qO- https://api.github.com/repos/yarnpkg/yarn/releases | jq -r ".[0].tag_name")
+    - SHOULD_BUILD="false"
+    - |
+      if [ "${YARN_VERSION}-${FULL_VERSION}" !== "$(cat versions.txt)" ]; then
+        echo "Version did not match, should build new image."
+        SHOULD_BUILD="true"
+      fi
 
 schedule:
   parallel:
@@ -71,6 +62,17 @@ schedule:
     - if: '$CI_PIPELINE_SOURCE == "web"'
       when: always
     - when: never
+  before_script:
+    - YARN_VERSION=$(wget -qO- https://api.github.com/repos/yarnpkg/yarn/releases | jq -r ".[0].tag_name")
+    - DEFAULT_CHECK="0-0"
+    - FULL_CHECK=$(cat versions.txt)
+    - FULL_CHECK="${FULL_CHECK:-$DEFAULT_CHECK}"
+    - IFS='-' read -a versions <<< "${FULL_CHECK}"
+    - |
+      if [ "${VERSIONS[0]} != "${YARN_VERSION}" ]; then
+        echo "Yarn version did not match, should build new image."
+        SHOULD_BUILD="true"
+      fi
 
 download:
   image:  registry.gitlab.com/jitesoft/dockerfiles/misc:latest
