@@ -20,10 +20,9 @@ check:
   stage: pre
   parallel:
     matrix:
-      - { VERSION: "12", TYPE: "erbium" }
       - { VERSION: "14", TYPE: "fermium" }
-      - { VERSION: "16", TYPE: "maintenance" }
-      - { VERSION: "17", TYPE: "latest" }
+      - { VERSION: "16", TYPE: "gallium" }
+      - { VERSION: "18", TYPE: "latest" }
   rules:
     - if: '$CI_PIPELINE_SOURCE == "schedule"'
       when: always
