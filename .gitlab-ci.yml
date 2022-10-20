@@ -22,7 +22,8 @@ check:
     matrix:
       - { VERSION: "14", TYPE: "fermium" }
       - { VERSION: "16", TYPE: "gallium" }
-      - { VERSION: "18", TYPE: "latest" }
+      - { VERSION: "18", TYPE: "hydrogen" }
+      - { VERSION: "19", TYPE: "latest" }
   rules:
     - if: '$CI_PIPELINE_SOURCE == "schedule"'
       when: always
