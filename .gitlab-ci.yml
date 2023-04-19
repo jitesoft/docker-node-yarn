@@ -23,7 +23,8 @@ check:
       - { VERSION: "14", TYPE: "fermium" }
       - { VERSION: "16", TYPE: "gallium" }
       - { VERSION: "18", TYPE: "hydrogen" }
-      - { VERSION: "19", TYPE: "latest" }
+      - { VERSION: "19", TYPE: "maintenance" }
+      - { VERSION: "20", TYPE: "latest" }
   rules:
     - if: '$CI_PIPELINE_SOURCE == "schedule"'
       when: always
