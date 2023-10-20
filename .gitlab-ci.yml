@@ -88,8 +88,8 @@ containerize:
   stage: containerize
   parallel:
     matrix:
-      - { TYPE: "slim", NODE_IMAGE: "node-base" }
-      - { TYPE: "full", NODE_IMAGE: "node-base/full" }
+      - { TYPE: "slim", TAG_SUFFIX: "-slim", NODE_IMAGE: "node-base" }
+      - { TYPE: "full", TAG_SUFFIX: "", NODE_IMAGE: "node-base/full" }
   image: registry.gitlab.com/jitesoft/dockerfiles/misc:latest
   rules:
     - if: "$BUILD"
@@ -99,8 +99,6 @@ containerize:
     - job: download
       artifacts: true
   script:
-    - TAG_SUFFIX=""
-    - if [ "${TYPE}" == "slim" ]; then TAG_SUFFIX="-slim"; fi
     - TAGS=$(helper "${CI_REGISTRY_IMAGE},jitesoft/node-yarn,ghcr.io/jitesoft/node-yarn" "${NODE_MAJOR}${TAG_SUFFIX},${TYPE}${TAG_SUFFIX}")
     - docker buildx build --platform linux/arm64,linux/amd64 --push ${TAGS} --progress plain --build-arg "YARN_VERSION=${YARN_VERSION}" --build-arg "NODE_IMAGE=${NODE_IMAGE}:${NODE_MAJOR}" .
   tags:
