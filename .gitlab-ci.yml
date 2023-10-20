@@ -1,5 +1,8 @@
 include:
-  - https://gitlab.com/jitesoft/gitlab-ci-lib/raw/master/Scan/trivy.yml
+  - file: /Scan/trivy.yml
+    project: jitesoft/gitlab-ci-lib
+  - file: /OCI/push-readme.yml
+    project: jitesoft/gitlab-ci-lib
 
 workflow:
   rules:
@@ -8,10 +11,20 @@ workflow:
     - when: never
 
 stages:
+  - readme
   - pre
   - download
   - containerize
   - scan
+
+update-readme:
+  stage: readme
+  extends: .readme-check.v2
+  variables:
+    GIT_DEPTH: "3"
+    REGISTRIES: "docker.io/jitesoft/node-yarn"
+    PUSHRM_FILE: "$CI_PROJECT_DIR/README.md"
+  tags: [ protected ]
 
 check:
   image: registry.gitlab.com/jitesoft/dockerfiles/misc:latest
