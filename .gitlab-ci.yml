@@ -102,7 +102,7 @@ containerize:
   parallel:
     matrix:
       - { TYPE: "slim", TAG_SUFFIX: "-slim", NODE_IMAGE: "node-base" }
-      - { TYPE: "full", TAG_SUFFIX: "", NODE_IMAGE: "node-base/full" }
+      - { TYPE: "full", NODE_IMAGE: "node-base/full" }
   image: registry.gitlab.com/jitesoft/dockerfiles/misc:latest
   rules:
     - if: "$BUILD"
