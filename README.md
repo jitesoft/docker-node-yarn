@@ -8,35 +8,25 @@ Image is based on the  `jitesoft/node-base` repository.
 
 Images are built for x86_64 and aarch64 and the latest and lts versions are actively maintained.
 
-### Full builds
+# Image/Tags
 
-* `14`, `latest`
-* `12`, `stable`, `lts`, `erbium`
+Tags are based on the Node.js version and uses the latest yarn version available at build time.  
+The `latest` tag references the latest build of the latest node version.  
+The `lts` tag references the latest build of the latest node lts version.  
+Tags named with their version name (`gallium`, `hydrogen` etc) is the latest build of the specific node version.  
+Tags named with their major version uses latest minor/patch at build-time.
 
-Unmaintained: 
+Images can be found at the following registries:
 
-### Slim builds
+* [DockerHub](https://hub.docker.com/r/jitesoft/node-yarn) `docker.io/jitesoft/node-yarn`
+* [GitLab](https://gitlab.com/jitesoft/dockerfiles/node-yarn) `registry.gitlab.com/jitesoft/dockerfiles/node-yarn`
+* [GitHub](https://github.com/orgs/jitesoft/packages/container/package/node-yarn) `ghcr.io/jitesoft/node-yarn`
 
-Due to adding a few core packages to the main branches of the image, two `slim` images have been introduced.  
-The slim images does not have `git g++ gcc wget make python openssl` packages installed hence decreasing the image size.
+## Slim/Full
 
-* `14-slim`, `latest-slim`
-* `12-slim`, `stable-slim`, `erbium-slim`, `lts-slim`
-
-#### Old unmaintained images
-
-* `13`
-* `13-slim`
-* `current`
-* `current-slim`
-* `11`
-* `11-slim`
-* `10`, `dubnium`
-* `10-slim`, `dubnium-slim`
-* `9`
-* `9-slim`
-* `8`, `carbon`
-* `8-slim`, `carbon-slim`
+The non-suffixed images are based on the `jitesoft/node-base` image while the `slim` suffixed image is based on the `jitesoft/node` image.  
+The difference between those images are that the "full" version contains a set of extra packages used in building:  
+`gcc`, `g++`, `curl`, `wget`, `openssl`, `python` and `make`.
 
 ## Docker files
 
@@ -49,5 +39,26 @@ This image follows the [Jitesoft image label specification 1.0.0](https://gitlab
 ## Licenses
 
 Files in this repository are released under the MIT license.  
-Read the nodejs license [here](https://github.com/nodejs/node/blob/master/LICENSE).  
+Read the Node.js license [here](https://github.com/nodejs/node/blob/master/LICENSE).  
 Yarn is released under the [BSD 2-Clause](https://github.com/yarnpkg/yarn/blob/master/LICENSE) license.
+
+### Sponsors
+
+Jitesoft images are built via GitLab CI on runners hosted by the following wonderful organisations:
+
+<a href="https://osuosl.org/" target="_blank" title="Oregon State University - Open Source Lab">
+    <img src="https://jitesoft.com/images/oslx128.webp" alt="Oregon State University - Open Source Lab">
+</a>
+
+_The companies above are not affiliated with Jitesoft or any Jitesoft Projects directly._
+
+---
+
+Sponsoring is vital for the further development and maintaining of open source.  
+Questions and sponsoring queries can be made by <a href="mailto:sponsor@jitesoft.com">email</a>.  
+If you wish to sponsor our projects, reach out to the email above or visit any of the following sites:
+
+[Open Collective](https://opencollective.com/jitesoft-open-source)  
+[GitHub Sponsors](https://github.com/sponsors/jitesoft)  
+[Patreon](https://www.patreon.com/jitesoft)
+
