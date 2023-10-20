@@ -25,8 +25,7 @@ Images can be found at the following registries:
 ## Slim/Full
 
 The non-suffixed images are based on the `jitesoft/node-base` image while the `slim` suffixed image is based on the `jitesoft/node` image.  
-The difference between those images are that the "full" version contains a set of extra packages used in building:  
-`gcc`, `g++`, `curl`, `wget`, `openssl`, `python` and `make`.
+The difference between those images are that the "full" version contains a set of extra packages used in building (`gcc`, `g++`, `curl`, `wget`, `openssl`, `python` and `make`).
 
 ## Docker files
 
