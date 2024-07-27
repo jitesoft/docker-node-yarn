@@ -36,7 +36,7 @@ check:
       - { VERSION: "16", TYPE: "gallium" }
       - { VERSION: "18", TYPE: "hydrogen" }
       - { VERSION: "20", TYPE: "lts" }
-      - { VERSION: "21", TYPE: "latest" }
+      - { VERSION: "22", TYPE: "latest" }
   rules:
     - if: '$CI_PIPELINE_SOURCE == "schedule"'
       when: always
