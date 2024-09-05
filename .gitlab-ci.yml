@@ -50,7 +50,7 @@ check:
     - touch versions.txt
     - YARN_VERSION=$(wget -qO- https://api.github.com/repos/yarnpkg/yarn/releases | jq -r ".[0].tag_name")
     - |
-      if [ "$(cat versions.txt)" != "${YARN_VERSION}" ]; then
+      if [ ! -z "${FORCE_BUILD+x}" ] || [ "$(cat versions.txt)" != "${YARN_VERSION}" ]; then
         echo "New version. Building new image."
         curl -F token=${CI_JOB_TOKEN} -F ref=master -F "variables[NODE_MAJOR]=${NODE_MAJOR}" -F "variables[YARN_VERSION]=${YARN_VERSION}" -F "variables[TYPE]=${TYPE}" -F "variables[BUILD]=true" https://gitlab.com/api/v4/projects/${CI_PROJECT_ID}/trigger/pipeline
       else
