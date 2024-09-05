@@ -117,7 +117,7 @@ containerize:
   script:
     - TAGS=$(helper "${CI_REGISTRY_IMAGE},jitesoft/node-yarn,ghcr.io/jitesoft/node-yarn" "${NODE_MAJOR}${TAG_SUFFIX},${RELEASE_NAME}${TAG_SUFFIX}")
     - |
-      if [ "NODE_MAJOR" == "$LTS_VERSION" ]; then
+      if [ "$NODE_MAJOR" == "$LTS_VERSION" ]; then
         EXTRA_TAGS=$(helper "${CI_REGISTRY_IMAGE},jitesoft/node-yarn,ghcr.io/jitesoft/node-yarn" "lts${TAG_SUFFIX}")
         TAGS="${TAGS}${EXTRA_TAGS}"
       fi
