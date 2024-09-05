@@ -6,7 +6,8 @@
 Docker image with alpine linux, node.js and yarn.  
 Image is based on the  `jitesoft/node-base` repository.  
 
-Images are built for x86_64 and aarch64 and the latest and lts versions are actively maintained.
+Images are automatically built for AMD64 and ARM64 on schedule and on triggers (node version changes) in GitLab CI.  
+Active tags are the `latest`, `lts` and major versions of the supported nodejs versions seen [here](https://nodejs.org/en/about/previous-releases).
 
 # Image/Tags
 
