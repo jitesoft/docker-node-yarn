@@ -36,10 +36,10 @@ check:
   stage: pre
   parallel:
     matrix:
-      - { VERSION: "16", RELEASE_NAME: "gallium" }
-      - { VERSION: "18", RELEASE_NAME: "hydrogen" }
-      - { VERSION: "20", RELEASE_NAME: "iron" }
-      - { VERSION: "22", RELEASE_NAME: "latest" }
+      - { NODE_MAJOR: "16", RELEASE_NAME: "gallium" }
+      - { NODE_MAJOR: "18", RELEASE_NAME: "hydrogen" }
+      - { NODE_MAJOR: "20", RELEASE_NAME: "iron" }
+      - { NODE_MAJOR: "22", RELEASE_NAME: "latest" }
   rules:
     - if: '$CI_PIPELINE_SOURCE == "schedule"'
       when: always
@@ -52,7 +52,7 @@ check:
     - |
       if [ ! -z "${FORCE_BUILD+x}" ] || [ "$(cat versions.txt)" != "${YARN_VERSION}" ]; then
         echo "New version. Building new image."
-        curl -F token=${CI_JOB_TOKEN} -F ref=master -F "variables[NODE_MAJOR]=${NODE_MAJOR}" -F "variables[YARN_VERSION]=${YARN_VERSION}" -F "variables[TYPE]=${TYPE}" -F "variables[BUILD]=true" https://gitlab.com/api/v4/projects/${CI_PROJECT_ID}/trigger/pipeline
+        curl -F token=${CI_JOB_TOKEN} -F ref=master -F "variables[NODE_MAJOR]=${NODE_MAJOR}" -F "variables[YARN_VERSION]=${YARN_VERSION}" -F "variables[RELEASE_NAME]=${RELEASE_NAME}" -F "variables[BUILD]=true" https://gitlab.com/api/v4/projects/${CI_PROJECT_ID}/trigger/pipeline
       else
         echo "Old image. Starting scan."
         curl -F token=${CI_JOB_TOKEN} -F ref=master -F "variables[NODE_MAJOR]=${NODE_MAJOR}" -F "variables[SCAN]=true" https://gitlab.com/api/v4/projects/${CI_PROJECT_ID}/trigger/pipeline
@@ -117,11 +117,12 @@ containerize:
   script:
     - TAGS=$(helper "${CI_REGISTRY_IMAGE},jitesoft/node-yarn,ghcr.io/jitesoft/node-yarn" "${NODE_MAJOR}${TAG_SUFFIX},${RELEASE_NAME}${TAG_SUFFIX}")
     - |
-      if [ "$VERSION" == "$LTS_VERSION" ]; then
+      if [ "NODE_MAJOR" == "$LTS_VERSION" ]; then
         EXTRA_TAGS=$(helper "${CI_REGISTRY_IMAGE},jitesoft/node-yarn,ghcr.io/jitesoft/node-yarn" "lts${TAG_SUFFIX}")
         TAGS="${TAGS}${EXTRA_TAGS}"
       fi
     - echo "Pushing tags, $TAGS"
+    - exit 1
     - docker buildx build --platform linux/arm64,linux/amd64 --push ${TAGS} --progress plain --build-arg "YARN_VERSION=${YARN_VERSION}" --build-arg "NODE_IMAGE=${NODE_IMAGE}:${NODE_MAJOR}" .
   tags:
     - protected
