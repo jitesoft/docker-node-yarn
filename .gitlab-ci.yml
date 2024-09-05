@@ -17,6 +17,9 @@ stages:
   - containerize
   - scan
 
+variables:
+  LTS_VERSION: 20
+
 update-readme:
   stage: readme
   extends: .readme-check.v2
@@ -33,10 +36,10 @@ check:
   stage: pre
   parallel:
     matrix:
-      - { VERSION: "16", TYPE: "gallium" }
-      - { VERSION: "18", TYPE: "hydrogen" }
-      - { VERSION: "20", TYPE: "lts" }
-      - { VERSION: "22", TYPE: "latest" }
+      - { VERSION: "16", RELEASE_NAME: "gallium" }
+      - { VERSION: "18", RELEASE_NAME: "hydrogen" }
+      - { VERSION: "20", RELEASE_NAME: "iron" }
+      - { VERSION: "22", RELEASE_NAME: "latest" }
   rules:
     - if: '$CI_PIPELINE_SOURCE == "schedule"'
       when: always
@@ -73,7 +76,7 @@ trigger:
   script:
     - echo "Triggered from node. Running full build."
     - YARN_VERSION=$(wget -qO- https://api.github.com/repos/yarnpkg/yarn/releases | jq -r ".[0].tag_name")
-    - curl -F token=${CI_JOB_TOKEN} -F ref=master -F "variables[NODE_MAJOR]=${NODE_MAJOR}" -F "variables[YARN_VERSION]=${YARN_VERSION}" -F "variables[TYPE]=${TYPE}" -F "variables[BUILD]=true" https://gitlab.com/api/v4/projects/${CI_PROJECT_ID}/trigger/pipeline
+    - curl -F token=${CI_JOB_TOKEN} -F ref=master -F "variables[NODE_MAJOR]=${NODE_MAJOR}" -F "variables[YARN_VERSION]=${YARN_VERSION}" -F "variables[RELEASE_NAME]=${RELEASE_NAME}" -F "variables[BUILD]=true" https://gitlab.com/api/v4/projects/${CI_PROJECT_ID}/trigger/pipeline
 
 download:
   image:  registry.gitlab.com/jitesoft/dockerfiles/misc:latest
@@ -101,8 +104,8 @@ containerize:
   stage: containerize
   parallel:
     matrix:
-      - { TYPE: "slim", TAG_SUFFIX: "-slim", NODE_IMAGE: "node-base" }
-      - { TYPE: "full", NODE_IMAGE: "node-base/full" }
+      - { IMAGE_TYPE: "slim", TAG_SUFFIX: "-slim", NODE_IMAGE: "node-base" }
+      - { IMAGE_TYPE: "full", NODE_IMAGE: "node-base/full" }
   image: registry.gitlab.com/jitesoft/dockerfiles/misc:latest
   rules:
     - if: "$BUILD"
@@ -112,7 +115,12 @@ containerize:
     - job: download
       artifacts: true
   script:
-    - TAGS=$(helper "${CI_REGISTRY_IMAGE},jitesoft/node-yarn,ghcr.io/jitesoft/node-yarn" "${NODE_MAJOR}${TAG_SUFFIX},${TYPE}${TAG_SUFFIX}")
+    - TAGS=$(helper "${CI_REGISTRY_IMAGE},jitesoft/node-yarn,ghcr.io/jitesoft/node-yarn" "${NODE_MAJOR}${TAG_SUFFIX},${RELEASE_NAME}${TAG_SUFFIX}")
+    - |
+      if ["$VERSION" == "$LTS_VERSION" ]; then
+        EXTRA_TAGS=$(helper "${CI_REGISTRY_IMAGE},jitesoft/node-yarn,ghcr.io/jitesoft/node-yarn" "lts${TAG_SUFFIX}")
+        TAGS="${TAGS}${EXTRA_TAGS}"
+      fi
     - docker buildx build --platform linux/arm64,linux/amd64 --push ${TAGS} --progress plain --build-arg "YARN_VERSION=${YARN_VERSION}" --build-arg "NODE_IMAGE=${NODE_IMAGE}:${NODE_MAJOR}" .
   tags:
     - protected
@@ -145,8 +153,8 @@ notify:trivy:
 scan:
   parallel:
     matrix:
-      - { TYPE: "slim", ANNOYING_NILL_DATA: "aaa" }
-      - { TYPE: "full", ANNOYING_NILL_DATA: "aaa" }
+      - { IMAGE_TYPE: "slim", ANNOYING_NILL_DATA: "aaa" }
+      - { IMAGE_TYPE: "full", ANNOYING_NILL_DATA: "aaa" }
   stage: scan
   rules:
     - if: "$SCAN"
@@ -154,5 +162,5 @@ scan:
     - when: never
   extends: .container_scanning
   before_script:
-    - if [ "${TYPE}" == "slim" ]; then TAG_SUFFIX="-slim"; fi
+    - if [ "${IMAGE_TYPE}" == "slim" ]; then TAG_SUFFIX="-slim"; fi
     - export SCANNING_IMAGE_NAME="${CI_REGISTRY_IMAGE}:${FULL_VERSION:-$NODE_MAJOR}${TAG_SUFFIX}"
