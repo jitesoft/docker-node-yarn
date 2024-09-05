@@ -18,7 +18,7 @@ stages:
   - scan
 
 variables:
-  LTS_VERSION: 20
+  LTS_VERSION: "20"
 
 update-readme:
   stage: readme
@@ -117,10 +117,11 @@ containerize:
   script:
     - TAGS=$(helper "${CI_REGISTRY_IMAGE},jitesoft/node-yarn,ghcr.io/jitesoft/node-yarn" "${NODE_MAJOR}${TAG_SUFFIX},${RELEASE_NAME}${TAG_SUFFIX}")
     - |
-      if ["$VERSION" == "$LTS_VERSION" ]; then
+      if [ "$VERSION" == "$LTS_VERSION" ]; then
         EXTRA_TAGS=$(helper "${CI_REGISTRY_IMAGE},jitesoft/node-yarn,ghcr.io/jitesoft/node-yarn" "lts${TAG_SUFFIX}")
         TAGS="${TAGS}${EXTRA_TAGS}"
       fi
+    - echo "Pushing tags, $TAGS"
     - docker buildx build --platform linux/arm64,linux/amd64 --push ${TAGS} --progress plain --build-arg "YARN_VERSION=${YARN_VERSION}" --build-arg "NODE_IMAGE=${NODE_IMAGE}:${NODE_MAJOR}" .
   tags:
     - protected
