@@ -9,12 +9,12 @@ LABEL maintainer="Johannes Tegnér <johannes@jitesoft.com>" \
       com.jitesoft.project.repo.uri="https://gitlab.com/jitesoft/dockerfiles/node-yarn" \
       com.jitesoft.project.repo.issues="https://gitlab.com/jitesoft/dockerfiles/node-yarn/issues" \
       com.jitesoft.project.registry.uri="registry.gitlab.com/jitesoft/dockerfiles/node-yarn" \
-      com.jitesoft.app.yarn.version="${YARN_VERSION}"
+      com.jitesoft.app.yarn.version="${YARN_VERSION}" \
       org.opencontainers.image.version="${YARN_VERSION}" \
       org.opencontainers.image.created="${BUILD_TIME}" \
       org.opencontainers.image.description="Nodejs and Yarn on alpine linux." \
       org.opencontainers.image.vendor="Jitesoft" \
-      org.opencontainers.image.source="https://gitlab.com/jitesoft/dockerfiles/node-yarn" \
+      org.opencontainers.image.source="https://gitlab.com/jitesoft/dockerfiles/node-yarn"
 
 ENV PATH="$PATH:/yarn/bin"
 RUN --mount=type=bind,source=./binaries,target=/tmp \
