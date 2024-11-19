@@ -2,6 +2,7 @@
 ARG NODE_IMAGE="node-base/full:23"
 FROM registry.gitlab.com/jitesoft/dockerfiles/${NODE_IMAGE}
 ARG YARN_VERSION
+ARG BUILD_TIME
 LABEL maintainer="Johannes Tegnér <johannes@jitesoft.com>" \
       maintainer.org="Jitesoft" \
       maintainer.org.uri="https://jitesoft.com" \
