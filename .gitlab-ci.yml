@@ -121,7 +121,7 @@ containerize:
         EXTRA_TAGS=$(helper "${CI_REGISTRY_IMAGE},jitesoft/node-yarn,ghcr.io/jitesoft/node-yarn" "lts${TAG_SUFFIX}")
         TAGS="${TAGS}${EXTRA_TAGS}"
       fi
-    - docker buildx build --sbom=true --provenance=true --platform linux/arm64,linux/amd64 --push ${TAGS} --progress plain -build-arg BUILD_TIME="$(date -Iseconds)" --build-arg "YARN_VERSION=${YARN_VERSION}" --build-arg "NODE_IMAGE=${NODE_IMAGE}:${NODE_MAJOR}" .
+    - docker buildx build --sbom=true --provenance=true --platform linux/arm64,linux/amd64 --push ${TAGS} --progress plain --build-arg BUILD_TIME="$(date -Iseconds)" --build-arg "YARN_VERSION=${YARN_VERSION}" --build-arg "NODE_IMAGE=${NODE_IMAGE}:${NODE_MAJOR}" .
   tags:
     - protected
     - buildx
