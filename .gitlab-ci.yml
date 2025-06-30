@@ -39,7 +39,7 @@ check:
       - { NODE_MAJOR: "18", RELEASE_NAME: "hydrogen" }
       - { NODE_MAJOR: "20", RELEASE_NAME: "iron" }
       - { NODE_MAJOR: "22", RELEASE_NAME: "jod" }
-      - { NODE_MAJOR: "23", RELEASE_NAME: "latest" }
+      - { NODE_MAJOR: "24", RELEASE_NAME: "latest" }
   rules:
     - if: '$CI_PIPELINE_SOURCE == "schedule"'
       when: always
