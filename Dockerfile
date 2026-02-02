@@ -1,5 +1,5 @@
 # syntax=docker/dockerfile:experimental
-ARG NODE_IMAGE="node-base/full:23"
+ARG NODE_IMAGE="node-base/full:25"
 FROM registry.gitlab.com/jitesoft/dockerfiles/${NODE_IMAGE}
 ARG YARN_VERSION
 ARG BUILD_TIME
