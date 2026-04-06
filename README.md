@@ -1,17 +1,18 @@
 # Node-Yarn
 
 [![Docker Pulls](https://img.shields.io/docker/pulls/jitesoft/node-yarn.svg)](https://cloud.docker.com/u/jitesoft/repository/docker/jitesoft/node-yarn)
-[![Back project](https://img.shields.io/badge/Open%20Collective-Tip%20the%20devs!-blue.svg)](https://opencollective.com/jitesoft-open-source)
 
-Docker image with alpine linux, node.js and yarn.  
+Docker image with alpine linux, node.js and yarn (v1).  
 Image is based on the  `jitesoft/node-base` repository.  
 
 Images are automatically built for AMD64 and ARM64 on schedule and on triggers (node version changes) in GitLab CI.  
 Active tags are the `latest`, `lts` and major versions of the supported nodejs versions seen [here](https://nodejs.org/en/about/previous-releases).
 
+**Observe: This image currently only contains the "classic" v1 yarn version.**  
+
 # Image/Tags
 
-Tags are based on the Node.js version and uses the latest yarn version available at build time.  
+Tags are based on the Node.js version and uses the latest yarn version - from the v1 branch - available at build time.  
 The `latest` tag references the latest build of the latest node version.  
 The `lts` tag references the latest build of the latest node lts version.  
 Tags named with their version name (`gallium`, `hydrogen` etc) is the latest build of the specific node version.  
@@ -44,7 +45,7 @@ Yarn is released under the [BSD 2-Clause](https://github.com/yarnpkg/yarn/blob/m
 
 ### Sponsors
 
-Jitesoft images are built via GitLab CI on runners hosted by the following wonderful organisations:
+Jitesoft images are built via GitLab CI on runners hosted by the following wonderful organizations:
 
 <a href="https://osuosl.org/" target="_blank" title="Oregon State University - Open Source Lab">
     <img src="https://jitesoft.com/images/oslx128.webp" alt="Oregon State University - Open Source Lab">
