@@ -8,7 +8,27 @@ Image is based on the  `jitesoft/node-base` repository.
 Images are automatically built for AMD64 and ARM64 on schedule and on triggers (node version changes) in GitLab CI.  
 Active tags are the `latest`, `lts` and major versions of the supported nodejs versions seen [here](https://nodejs.org/en/about/previous-releases).
 
-**Observe: This image currently only contains the "classic" v1 yarn version.**  
+## Yarn major version
+
+This image contains yarn 1.x, that is, the classic Yarn package manager.  
+
+Later versions of yarn is recommended to install on a project basis and prefferably by using corepack.  
+Due to this, the recommendation - if you wish to use yarn berry (v2+) - is to not use this image.  
+
+Extending the node base image to use corepack can be easily done in the following manner:
+
+```dockerfile
+# Node 24 and earlier
+FROM jitesoft/node-base:24
+RUN corepack enable
+```
+
+```dockerfile
+# Node 25 and later
+FROM jitesoft/node-base:25
+RUN npm i -g corepack \
+    && corepack enable
+```
 
 # Image/Tags
 
